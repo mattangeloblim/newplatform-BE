@@ -1,8 +1,9 @@
-const User = require("../models/UserModel")
-const Affiliation = require("../models/AffiliationModel")
-const Wallet = require("../models/WalletModel")
-const OTP = require("../models/OTPModel")
+const User = require("../models/UserModel");
+const Affiliation = require("../models/AffiliationModel");
+const Wallet = require("../models/WalletModel");
+const OTP = require("../models/OTPModel");
 const nodemailer = require('nodemailer');
+const bcrypt = require("bcrypt");
 
 const { v4: uuidv4 } = require('uuid');
 const { generateAffiliationToken, generateWalletId } = require("../utils/TokenGenerated");
@@ -11,7 +12,8 @@ const generateOTP = require("../utils/OTP")
 async function registerUser(userData) {
 
     const player_id = uuidv4();
-    const user = await User.create({ ...userData, player_id });
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const user = await User.create({ ...userData, player_id, password: hashedPassword});
     await createAffiliation(player_id);
     await connectWallet(player_id)
 

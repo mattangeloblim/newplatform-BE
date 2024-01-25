@@ -7,4 +7,6 @@ const validatePhoneNumber = require('../../middlewares/phoneNumberValidation');
 // Register User Route
 router.post('/register/player', validatePhoneNumber, userController.registerUser);
 
+router.post('/login/player', userController.loginUser);
+
 module.exports = router;
