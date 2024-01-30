@@ -16,11 +16,16 @@ app.use(helmet());
 app.use(morgan('combined'));
 
 
-const Authentication = require("./routers/clientSide/Authentication")
-const gcashCashinApi = require("./routers/clientSide/gcashCashinAPI")
-const gcashNotificationApi = require("./routers/clientSide/GcashNotificationAPI")
+const Authentication = require("./routers/clientSide/Authentication");
+const gcashCashinApi = require("./routers/clientSide/gcashCashinAPI");
+const gcashNotificationApi = require("./routers/clientSide/GcashNotificationAPI");
+const redirectEGames = require("./routers/gameSide/breddasRedirectGamesRouter");
+const gameWalletIntegration = require("./routers/gameSide/breddasGamesRouter");
 
-app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi)
+app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi);
+
+app.use("/redirect", redirectEGames);
+app.use("/", gameWalletIntegration);
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
