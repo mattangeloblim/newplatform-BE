@@ -2,6 +2,7 @@ const User = require("../models/UserModel");
 const Affiliation = require("../models/AffiliationModel");
 const Wallet = require("../models/WalletModel");
 const OTP = require("../models/OTPModel");
+const { Op } = require("sequelize")
 const nodemailer = require('nodemailer');
 const bcrypt = require("bcrypt");
 
@@ -9,11 +10,24 @@ const { v4: uuidv4 } = require('uuid');
 const { generateAffiliationToken, generateWalletId } = require("../utils/TokenGenerated");
 const generateOTP = require("../utils/OTP")
 
-async function registerUser(userData) {
+async function registerUserService(userData) {
+
+    const existingUser = await User.findOne({
+        where: {
+            [Op.or]: [
+                { username: userData.username },
+                { email: userData.email }
+            ]
+        }
+    });
+
+    if (existingUser) {
+        throw new Error("Username or email already exists");
+    }
 
     const player_id = uuidv4();
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const user = await User.create({ ...userData, player_id, password: hashedPassword});
+    const user = await User.create({ ...userData, player_id, password: hashedPassword });
     await createAffiliation(player_id);
     await connectWallet(player_id)
 
@@ -33,7 +47,7 @@ async function registerUser(userData) {
         from: "foodbud4@gmail.com",
         to: player_email,
         subject: "Registration Successful",
-        text: `Dear ${Name},\n\nThank you for registering! To verify your account, please verify using this code ${OTP}`,
+        text: `Dear ${Name},\n\nThank you for registering! To verify your account, please verify your account using this code ${OTP}`,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
@@ -83,13 +97,36 @@ async function saveOTP(player_id, otps, account) {
 
     const OTPData = {
         player_id,
-        OTP:otps,
+        OTP: otps,
         account
     }
 
     await OTP.create(OTPData);
 }
+async function verifyUserService(verificationData) {
+    const { player_id, otpsent } = verificationData
+
+    const verifyUser = await OTP.findOne({
+        where: {
+            player_id: player_id,
+            OTP: otpsent
+        }
+    })
+    if (!verifyUser) {
+        throw new Error("Wrong OTP");
+    }
+
+    await User.update(
+        { isVerified: 1 },
+        {
+            where: {
+                player_id: player_id
+            }
+        }
+    )
+}
 
 module.exports = {
-    registerUser
+    registerUserService,
+    verifyUserService
 };

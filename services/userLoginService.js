@@ -2,6 +2,7 @@ const User = require("../models/UserModel")
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken")
 
+// todoooooo: PREVENT THE USER FROM LOGGING IN USING DIFFERENT DEVICE AT THE SAME TIME
 async function loginUser(credentialsData, res) {
     const { username, password } = credentialsData;
 
@@ -14,15 +15,18 @@ async function loginUser(credentialsData, res) {
     });
 
     if (!user) {
-        throw new Error("Invalid username or password");
+        throw new Error("Invalid username");
     }
-
+    if (user.isVerified !== 1) {
+        throw new Error("User is not verified yet");
+    }
     // Compare the provided password with the hashed password stored in the database
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-        throw new Error("Invalid username or password");
+        throw new Error("Invalid password");
     } else {
+
         const payload = {
             uid: user.player_id,
             username: user.username,
@@ -42,8 +46,6 @@ async function loginUser(credentialsData, res) {
 
         return token
     }
-
-
 }
 
 module.exports = {

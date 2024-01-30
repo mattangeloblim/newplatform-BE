@@ -15,44 +15,45 @@ router.post("/gcash/notification-url", async (req, res) => {
 
         const phTime = moment().tz('Asia/Manila').format("YYYY-MM-DD HH:mm:ss")
 
-        if (status === "SUCCESS") {
-            const updateGcashRow = await GcashLogsModel.update(
+        const updateGcashRow = await GcashLogsModel.update(
+            { status: status },
+            {
+                where:
+                {
+                    acquirement_id: acquirement_id,
+                    order_id: order_id,
+                    user_id: user_id
+                }
+            }
+        );
+
+        if (updateGcashRow[0] === 1) {
+            await TransactionModel.update(
                 { status: status },
                 {
-                    where:
-                    {
-                        acquirement_id: acquirement_id,
-                        order_id: order_id,
-                        user_id: user_id
-                    }
-                }
-            );
-
-            if (updateGcashRow[0] === 1) {
-                await TransactionModel.update(
-                    { status: status },
-                    {
-                        where: {
-                            transaction_id: user_id
-                        }
-                    }
-                )
-
-                const notificationResponse = {
-                    acquirement_id,
-                    amount,
-                    order_id,
-                    status,
-                    user_id,
-                    received_at: phTime,
-                }
-
-                const TransactionRow = await TransactionModel.findOne({
                     where: {
                         transaction_id: user_id
                     }
-                })
+                }
+            )
 
+            const notificationResponse = {
+                acquirement_id,
+                amount,
+                order_id,
+                status,
+                user_id,
+                received_at: phTime
+            }
+
+            const TransactionRow = await TransactionModel.findOne({
+                where: {
+                    transaction_id: user_id
+                }
+            })
+
+
+            if (status === "SUCCESS") {
                 const userWalletId = TransactionRow.dataValues.wallet_id
 
                 const findUserWallet = await WalletModel.findOne({
@@ -73,12 +74,15 @@ router.post("/gcash/notification-url", async (req, res) => {
                         overall_deposit: findUserWallet.overall_deposit + parseFloat(amount)
                     });
                 }
-                return res.status(200).json({ success: true, message: "Status updated successfully", notificationResponse });
-            } else {
-                // No rows were updated
-                return res.status(404).json({ success: false, message: "Record not found" });
             }
+
+
+            return res.status(200).json({ success: true, message: "Status updated successfully", notificationResponse });
+        } else {
+            // No rows were updated
+            return res.status(404).json({ success: false, message: "Record not found" });
         }
+
     } catch (error) {
         console.error(error)
         res.status(500).json({ message: error.message })

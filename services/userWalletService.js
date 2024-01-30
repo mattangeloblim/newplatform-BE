@@ -1,5 +1,6 @@
 const TransactionModel = require("../models/TransactionModel");
 const GcashLogsModel = require("../models/GcashLogsModels")
+const Wallet = require("../models/WalletModel");
 const { generateTransactionId } = require("../utils/TokenGenerated")
 const axios = require("axios")
 
@@ -61,4 +62,33 @@ async function depositUserWallet(keyData, player_id, amount) {
     }
 }
 
-module.exports = { depositUserWallet }
+async function transactionHistory(player_id) {
+    try {
+        const transactionList = await TransactionModel.findAll({
+            where: {
+                player_id: player_id
+            }
+        });
+        return transactionList;
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+async function walletBalance(player_id) {
+    try {
+        const userWalletBalance = await Wallet.findOne({
+            where: {
+                player_id: player_id
+            },
+            attributes: ['wallet_balance']
+        });
+        return userWalletBalance;
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+module.exports = { depositUserWallet, transactionHistory, walletBalance }
