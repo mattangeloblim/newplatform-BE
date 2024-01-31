@@ -3,10 +3,10 @@ const router = express.Router()
 const Wallet = require("../../models/WalletModel")
 const md5 = require('md5');
 
-router.get("/bingo-games/wallet/:user_id", async (req, res) => {
+router.get("/bingo-games/wallet", async (req, res) => {
     try {
-        const { user_id } = req.params;
-        const { token } = req.query;
+        // const {  } = req.params;
+        const { user_id, token } = req.query;
 
         const userWallet = await Wallet.findOne({
             where: {
