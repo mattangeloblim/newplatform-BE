@@ -1,12 +1,15 @@
 const express = require("express")
 const router = express.Router()
 const Wallet = require("../../models/WalletModel")
-const md5 = require('md5');
+const GameProvider = require("../../models/GameProviderModel")
+const ProviderGameList = require("../../models/ProviderGameListModel")
+const GamePlatform = require("../../models/GamePlatformsModel")
 
-router.get("/bingo-games/wallet", async (req, res) => {
+
+router.post("/bingo-games/wallet", async (req, res) => {
+
     try {
-        // const {  } = req.params;
-        const { user_id, token } = req.query;
+        const { user_id, token } = req.body
 
         const userWallet = await Wallet.findOne({
             where: {
@@ -16,15 +19,11 @@ router.get("/bingo-games/wallet", async (req, res) => {
         });
 
         const response = {
-            status: 1,
-            result: {
-                currency: "PHP",
-                balance: userWallet ? userWallet.wallet_balance : 0,
-                userId: user_id,
-                status: "Success"
-            }
+            currency: "PHP",
+            balance: userWallet ? userWallet.wallet_balance : 0,
+            userId: user_id,
+            status: "Success"
         };
-
         res.json(response);
     } catch (error) {
         console.error(error);
@@ -32,28 +31,28 @@ router.get("/bingo-games/wallet", async (req, res) => {
     }
 });
 
+
 router.post("/bingo-games/bet", async (req, res) => {
     try {
-        const { user_id, token, amount, transaction_id, round_id, jackpot_contribution } = req.query
+        const { user_id, token, amount, transaction_id, round_id, jackpot_contribution } = req.body
 
-        const userWallet = await Wallet.findOne({
-            where:{
-                player_id:user_id
+        const findUserWallet = await Wallet.findOne({
+            where: {
+                player_id: user_id
             },
-            attributes:['wallet_balance']
+            attributes: ['wallet_balance']
         })
+        const currentWallet = findUserWallet.dataValues.wallet_balance
+        const updatedBalance = currentWallet - amount
 
-        console.log(userWallet)
+        const response = {
+            currency: "PHP",
+            balance: updatedBalance,
+            userId: user_id,
+            status: "Success"
+        };
 
-        // const bettingHistory = await BettingHistory.create({
-        //     player_id: user_id,
-        //     token: token,
-        //     amount: amount,
-        //     transaction_id: transaction_id,
-        //     round_id: round_id,
-        //     jackpot_contribution: jackpot_contribution
-        // })
-
+        res.json(response);
     } catch (error) {
         console.error(error)
         res.status(500).json({ message: error.message })
