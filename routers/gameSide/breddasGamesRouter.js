@@ -1,24 +1,12 @@
 const express = require("express")
 const router = express.Router()
 const Wallet = require("../../models/WalletModel")
-const crypto = require('crypto');
+const md5 = require('md5');
 
-function generateHash(user_id, token) {
-    const secretKey = 'breddas-key'; // Replace with your actual secret key
-    const sortedParams = { user_id, token };
-    const sortedKeys = Object.keys(sortedParams).sort();
-    const paramString = sortedKeys.map(key => `${key}=${sortedParams[key]}`).join('&');
-    const hashString = `${paramString}${secretKey}`;
-    const hash = crypto.createHash('md5').update(hashString).digest('hex');
-    return hash;
-}
-
-router.get("/bingo-games/wallet", async (req, res) => {
+router.get("/bingo-games/wallet/:user_id", async (req, res) => {
     try {
-        let { user_id, token, hash } = req.query;
-        const hashgenerated = generateHash(user_id, token);
-
-        hash = hashgenerated;
+        const { user_id } = req.params;
+        const { token } = req.query;
 
         const userWallet = await Wallet.findOne({
             where: {
@@ -27,18 +15,50 @@ router.get("/bingo-games/wallet", async (req, res) => {
             attributes: ['wallet_balance']
         });
 
-        // Include the hash in the response
-        res.json({
-            currency: "PHP",
-            balance: userWallet ? userWallet.wallet_balance : 0,
-            userId: user_id,
-            status: "Success"
-        });
+        const response = {
+            status: 1,
+            result: {
+                currency: "PHP",
+                balance: userWallet ? userWallet.wallet_balance : 0,
+                userId: user_id,
+                status: "Success"
+            }
+        };
+
+        res.json(response);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ status: 0, error: 'Internal Server Error' });
     }
 });
+
+router.post("/bingo-games/bet", async (req, res) => {
+    try {
+        const { user_id, token, amount, transaction_id, round_id, jackpot_contribution } = req.query
+
+        const userWallet = await Wallet.findOne({
+            where:{
+                player_id:user_id
+            },
+            attributes:['wallet_balance']
+        })
+
+        console.log(userWallet)
+
+        // const bettingHistory = await BettingHistory.create({
+        //     player_id: user_id,
+        //     token: token,
+        //     amount: amount,
+        //     transaction_id: transaction_id,
+        //     round_id: round_id,
+        //     jackpot_contribution: jackpot_contribution
+        // })
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: error.message })
+    }
+})
 
 
 module.exports = router

@@ -5,6 +5,9 @@ module.exports = cors({
     if (
       [
         "http://localhost:3000",
+        "https://888bingo.ph",
+        "https://stagingapi2.888bingo.ph",
+        "https://api2.888bingo.ph",
       ].includes(origin) ||
       !origin
     ) {
