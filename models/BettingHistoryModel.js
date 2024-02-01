@@ -14,15 +14,15 @@ const BettingHistory = sequelize.define("BettingHistory", {
     },
     game_provider_id: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     game_provider_name: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     game_name: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     amount: {
         type: DataTypes.INTEGER,

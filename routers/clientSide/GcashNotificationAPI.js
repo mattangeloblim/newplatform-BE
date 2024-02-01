@@ -76,7 +76,6 @@ router.post("/gcash/notification-url", async (req, res) => {
                 }
             }
 
-
             return res.status(200).json({ success: true, message: "Status updated successfully", notificationResponse });
         } else {
             // No rows were updated
