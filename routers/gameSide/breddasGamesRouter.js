@@ -37,12 +37,10 @@ router.post("/bingo-games/wallet", async (req, res) => {
 router.post("/bingo-games/bet", async (req, res) => {
     try {
         // const { game_provider_id, game_provider_name, game_name } = req.query
-        const { user_id, token, amount, transaction_id, round_id, jackpot_contribution } = req.body
+        const { user_id, token, amount, transaction_id, round_id, jackpot_contribution, game_type } = req.body
 
         const bet_id = Date.now().toString();
-        const game_name = req.cookies.game_name;
-        const game_type = req.cookies.game_type;
-        const provider_name = req.cookies.provider_name;
+        console.log(game_type)
 
         const findUserWallet = await Wallet.findOne({
             where: {
@@ -57,7 +55,7 @@ router.post("/bingo-games/bet", async (req, res) => {
 
         await BettingHistory.create({
             player_id: user_id,
-            game_provider_id: game_type,
+            game_provider_id,
             game_provider_name: provider_name,
             game_name: game_name,
             amount: amount,
