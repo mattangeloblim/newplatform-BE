@@ -5,6 +5,9 @@ const Wallet = require("../../models/WalletModel")
 // const ProviderGameList = require("../../models/ProviderGameListModel")
 // const GamePlatform = require("../../models/GamePlatformsModel")
 const BettingHistory = require("../../models/BettingHistoryModel")
+const cookieParser = require('cookie-parser');
+
+router.use(cookieParser());
 
 
 router.post("/bingo-games/wallet", async (req, res) => {
