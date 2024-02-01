@@ -110,13 +110,9 @@ router.post("/bingo-games/win", async (req, res) => {
             return;
         }
 
-        // Update the result column based on win_type
-        if (win_type === 0) {
-            // If win_type is 0, set the result to "win"
+        if (win_type) {
+            console.log(win_type)
             await updateBetting.update({ result: 'WIN', amount_won: amount });
-        } else if (win_type === 1) {
-            // If win_type is not 0, set the result to "lose"
-            await updateBetting.update({ result: 'JACKPOT', amount_won: amount });
         }
 
         const findUserWallet = await Wallet.findOne({
@@ -127,8 +123,8 @@ router.post("/bingo-games/win", async (req, res) => {
         })
 
         const currentWallet = findUserWallet.dataValues.wallet_balance
-
         const updatedBalance = currentWallet + amount
+        console.log(updatedBalance)
 
         const response = {
             currency: "PHP",
