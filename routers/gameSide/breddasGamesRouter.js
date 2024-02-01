@@ -95,7 +95,7 @@ router.post("/bingo-games/bet", async (req, res) => {
 
 router.post("/bingo-games/win", async (req, res) => {
     try {
-        const { user_id, amount, transaction_id, round_id } = req.body;
+        const { user_id, amount, transaction_id, round_id, result } = req.body;
 
 
         const findUserWallet = await Wallet.findOne({
@@ -115,7 +115,7 @@ router.post("/bingo-games/win", async (req, res) => {
             amount_won: amount,
             transaction_id,
             round_id,
-            win_type: 1
+            win_type: result
         })
 
         await Wallet.update(
