@@ -49,15 +49,6 @@ const BettingHistory = sequelize.define("BettingHistory", {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0
-    },
-    result: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    amount_won: {
-        type: DataTypes.INTEGER,
-        allowNull:false,
-        defaultValue: 0
     }
 }, {
     tableName: 'Betting_History',

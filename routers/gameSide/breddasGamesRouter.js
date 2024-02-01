@@ -6,6 +6,7 @@ const Wallet = require("../../models/WalletModel")
 // const GamePlatform = require("../../models/GamePlatformsModel")
 const BettingHistory = require("../../models/BettingHistoryModel")
 const cookieParser = require('cookie-parser');
+const BettingResult = require("../../models/BettingResultModel");
 
 router.use(cookieParser());
 
@@ -94,26 +95,7 @@ router.post("/bingo-games/bet", async (req, res) => {
 
 router.post("/bingo-games/win", async (req, res) => {
     try {
-        const { user_id, amount, transaction_id, round_id, win_type } = req.body;
-
-        const updateBetting = await BettingHistory.findOne({
-            where: {
-                player_id: user_id,
-                transaction_id: transaction_id,
-                round_id: round_id
-            }
-        });
-
-        if (!updateBetting) {
-            // Handle the case when the record is not found
-            res.status(200).json({ message: 'Betting record not found' });
-            return;
-        }
-
-        if (win_type) {
-            console.log(win_type)
-            await updateBetting.update({ result: 'WIN', amount_won: amount });
-        }
+        const { user_id, amount_won, transaction_id, round_id, win_type } = req.body;
 
         const findUserWallet = await Wallet.findOne({
             where: {
@@ -123,8 +105,16 @@ router.post("/bingo-games/win", async (req, res) => {
         })
 
         const currentWallet = findUserWallet.dataValues.wallet_balance
-        const updatedBalance = currentWallet + amount
-        console.log(updatedBalance)
+        const updatedBalance = currentWallet + amount_won
+        console.log("THE UPDATED BALANCE", updatedBalance)
+
+        await BettingResult.create({
+            player_id: user_id,
+            amount_won: amount_won,
+            transaction_id,
+            round_id,
+            win_type
+        })
 
         const response = {
             currency: "PHP",
