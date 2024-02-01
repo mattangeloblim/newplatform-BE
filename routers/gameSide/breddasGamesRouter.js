@@ -36,6 +36,7 @@ router.post("/bingo-games/wallet", async (req, res) => {
 
 router.post("/bingo-games/bet", async (req, res) => {
     try {
+        //NEEDS TO FINISH THE INTEGRITY OF GAME_TYPE
         // const { game_provider_id, game_provider_name, game_name } = req.query
         const { user_id, token, amount, transaction_id, round_id, jackpot_contribution, game_type } = req.body
 
