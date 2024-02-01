@@ -35,7 +35,7 @@ router.post("/bingo-games/wallet", async (req, res) => {
 router.post("/bingo-games/bet", async (req, res) => {
     try {
         const { game_provider_id, game_provider_name, game_name } = req.query
-        const { user_id, token, amount, transaction_id, round_id, jackpot_contribution } = req.body
+        const { user_id, game_type, token, amount, transaction_id, round_id, jackpot_contribution } = req.body
 
         const bet_id = Date.now().toString();
 
@@ -53,7 +53,7 @@ router.post("/bingo-games/bet", async (req, res) => {
         await BettingHistory.create({
             player_id: user_id,
             game_provider_id: game_provider_id,
-            game_provider_name: game_provider_name,
+            game_provider_name: game_type,
             game_name: game_name,
             amount: amount,
             wallet_id: userWalletId,
