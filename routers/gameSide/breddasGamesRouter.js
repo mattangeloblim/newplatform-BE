@@ -92,5 +92,57 @@ router.post("/bingo-games/bet", async (req, res) => {
     }
 })
 
+router.post("/bingo-games/win", async (req, res) => {
+    try {
+        const { user_id, amount, transaction_id, round_id, win_type } = req.body;
+
+        const updateBetting = await BettingHistory.findOne({
+            where: {
+                player_id: user_id,
+                transaction_id: transaction_id,
+                round_id: round_id
+            }
+        });
+
+        if (!updateBetting) {
+            // Handle the case when the record is not found
+            res.status(200).json({ message: 'Betting record not found' });
+            return;
+        }
+
+        // Update the result column based on win_type
+        if (win_type === 0) {
+            // If win_type is 0, set the result to "win"
+            await updateBetting.update({ result: 'WIN', amount_won: amount });
+        } else if (win_type === 1) {
+            // If win_type is not 0, set the result to "lose"
+            await updateBetting.update({ result: 'JACKPOT', amount_won: amount });
+        }
+
+        const findUserWallet = await Wallet.findOne({
+            where: {
+                player_id: user_id
+            },
+            attributes: ['wallet_balance']
+        })
+
+        const currentWallet = findUserWallet.dataValues.wallet_balance
+
+        const updatedBalance = currentWallet + amount
+
+        const response = {
+            currency: "PHP",
+            balance: updatedBalance,
+            userId: user_id,
+            status: "Success"
+        };
+
+        res.json(response);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 module.exports = router
