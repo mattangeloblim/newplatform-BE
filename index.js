@@ -21,6 +21,9 @@ const gcashCashinApi = require("./routers/clientSide/gcashCashinAPI");
 const gcashNotificationApi = require("./routers/clientSide/GcashNotificationAPI");
 const redirectEGames = require("./routers/gameSide/breddasRedirectGamesRouter");
 const gameWalletIntegration = require("./routers/gameSide/breddasGamesRouter");
+const cookieParser = require('cookie-parser');
+
+app.use(cookieParser())
 
 app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi);
 

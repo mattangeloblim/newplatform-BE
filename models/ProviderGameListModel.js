@@ -12,6 +12,10 @@ const ProviderGameList = sequelize.define("ProviderGameList", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    game_code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     game_name: {
         type: DataTypes.STRING,
         allowNull: false,
