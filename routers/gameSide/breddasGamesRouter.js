@@ -107,7 +107,7 @@ router.post("/bingo-games/win", async (req, res) => {
         })
 
         const currentWallet = findUserWallet.dataValues.wallet_balance
-        const updatedBalance = parseFloat(currentWallet) + parseFloat(amount_won);
+        const updatedBalance = parseFloat(currentWallet) + parseFloat(amount);
         console.log("THE UPDATED BALANCE", updatedBalance)
 
         await BettingResult.create({
