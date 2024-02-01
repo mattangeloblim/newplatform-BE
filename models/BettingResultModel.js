@@ -25,7 +25,7 @@ const BettingResult = sequelize.define("BettingResult", {
         allowNull: true,
     },
     win_type: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
     }
 }, {
