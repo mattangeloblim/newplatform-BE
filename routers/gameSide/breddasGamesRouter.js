@@ -56,9 +56,9 @@ router.post("/bingo-games/bet", async (req, res) => {
 
         await BettingHistory.create({
             player_id: user_id,
-            game_provider_id,
-            game_provider_name: provider_name,
-            game_name: game_name,
+            // game_provider_id
+            // game_provider_name: provider_name
+            // game_name: game_name
             amount: amount,
             wallet_id: userWalletId,
             bet_id: bet_id,
