@@ -10,7 +10,6 @@ const BettingResult = require("../../models/BettingResultModel");
 
 router.use(cookieParser());
 
-
 router.post("/bingo-games/wallet", async (req, res) => {
     try {
         const { user_id, token } = req.body
@@ -34,7 +33,6 @@ router.post("/bingo-games/wallet", async (req, res) => {
         res.status(500).json({ status: 0, error: 'Internal Server Error' });
     }
 });
-
 
 router.post("/bingo-games/bet", async (req, res) => {
     try {
@@ -97,7 +95,6 @@ router.post("/bingo-games/win", async (req, res) => {
     try {
         const { user_id, amount, transaction_id, round_id, result } = req.body;
 
-
         const findUserWallet = await Wallet.findOne({
             where: {
                 player_id: user_id
@@ -106,9 +103,7 @@ router.post("/bingo-games/win", async (req, res) => {
         })
 
         const currentWallet = findUserWallet.dataValues.wallet_balance
-        console.log(currentWallet)
         const updatedBalance = parseFloat(currentWallet) + parseFloat(amount);
-        console.log("THE UPDATED BALANCE", updatedBalance)
 
         await BettingResult.create({
             player_id: user_id,
@@ -118,7 +113,7 @@ router.post("/bingo-games/win", async (req, res) => {
             win_type: result
         })
 
-        await Wallet.update(
+        await Wallet.update (
             { wallet_balance: updatedBalance },
             {
                 where: {
