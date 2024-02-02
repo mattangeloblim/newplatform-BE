@@ -8,15 +8,19 @@ const Ip_Address = sequelize.define('Ip_Address', {
         autoIncrement: true,
         allowNull: false,
     },
+    user: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     ipAddress: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    timestamp: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
+    action: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    }
 });
-// Ip_Address.sync()
+Ip_Address.sync()
 
 module.exports = Ip_Address;

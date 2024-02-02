@@ -2,6 +2,7 @@
 const registerService = require('../services/userRegisterService');
 const userProfileService = require("../services/userProfileServices")
 const loginService = require('../services/userLoginService');
+const ipAddressModel = require("../models/IpAddressModel")
 
 async function registerUser(req, res) {
     try {
@@ -22,6 +23,12 @@ async function loginUser(req, res) {
 
         // Log the user's IP address
         console.log(`User with username ${credentialsData.username} logged in from IP address: ${userIPAddress}`);
+
+        await ipAddressModel.create({
+            user: credentialsData.username,
+            ipAddress: userIPAddress,
+            action: 'Login'
+        })
 
         res.status(200).json({ success: true, loginAuthenticate })
 
