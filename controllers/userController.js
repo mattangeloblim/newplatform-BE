@@ -18,6 +18,10 @@ async function loginUser(req, res) {
     try {
         const credentialsData = req.body;
         const loginAuthenticate = await loginService.loginUser(credentialsData, res)
+        const userIPAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+        // Log the user's IP address
+        console.log(`User with username ${credentialsData.username} logged in from IP address: ${userIPAddress}`);
 
         res.status(200).json({ success: true, loginAuthenticate })
 

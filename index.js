@@ -29,7 +29,7 @@ app.use(cookieParser())
 
 // Set trust proxy to only trust the X-Forwarded-For header from a specific IP address or network.
 // Adjust the 'loopback' value based on your deployment environment.
-app.set('trust proxy', '127.0.0.1')
+// app.set('trust proxy', '127.0.0.1')
 
 //HEADERS FOR SECURITY MEASURES
 app.use((req, res, next) => {
