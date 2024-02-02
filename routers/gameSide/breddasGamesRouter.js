@@ -4,6 +4,8 @@ const Wallet = require("../../models/WalletModel")
 const BettingHistory = require("../../models/BettingHistoryModel")
 const cookieParser = require('cookie-parser');
 const BettingResult = require("../../models/BettingResultModel");
+const Affiliation = require("../../models/AffiliationModel");
+const User = require("../../models/UserModel");
 
 router.use(cookieParser());
 
@@ -84,6 +86,40 @@ router.post("/bingo-games/bet", async (req, res) => {
                 }
             }
         );
+
+        const checkUser = await User.findOne({
+            where: {
+                player_id: user_id
+            },
+            attributes: ['referral_token']
+        })
+
+        const ref_token = checkUser.dataValues.referral_token
+
+        if (ref_token !== null) {
+            const affiliationRecord = await Affiliation.findOne({
+                where: {
+                    token: ref_token
+                },
+                attributes: ['affiliation_balance']
+            });
+
+            if (affiliationRecord) {
+                const currentAffiliationBalance = affiliationRecord.dataValues.affiliation_balance;
+
+                // Increment the affiliation balance
+                const updatedAffiliationBalance = currentAffiliationBalance + amount * 0.01;
+
+                await Affiliation.update(
+                    { affiliation_balance: updatedAffiliationBalance },
+                    {
+                        where: {
+                            token: ref_token
+                        }
+                    }
+                )
+            }
+        }
 
         const response = {
             currency: "PHP",
