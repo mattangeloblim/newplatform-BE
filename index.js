@@ -27,10 +27,9 @@ const cookieParser = require('cookie-parser');
 
 app.use(cookieParser())
 
-// Enable trust for headers set by proxies, such as X-Forwarded-For.
-// This ensures that Express uses the correct client IP address when the app is behind a proxy.
-// It enhances security and proper handling of client information.
-app.set('trust proxy', true);
+// Set trust proxy to only trust the X-Forwarded-For header from a specific IP address or network.
+// Adjust the 'loopback' value based on your deployment environment.
+app.set('trust proxy', '127.0.0.1')
 
 //HEADERS FOR SECURITY MEASURES
 app.use((req, res, next) => {
@@ -58,18 +57,6 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something went wrong!');
 });
-
-app.use(async (req, res, next) => {
-    const ipAddress = req.headers['x-forwarded-for'];
-    try {
-      // Save the IP address to the database
-      await ipAddressModel.create({ ipAddress: ipAddress });
-    } catch (error) {
-      console.error('Error saving IP address to database:', error);
-    }
-  
-    next();
-  });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason, promise) => {
