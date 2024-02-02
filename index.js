@@ -4,10 +4,9 @@ const port = process.env.PORT
 const http = require('http');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
+// const rateLimit = require('express-rate-limit');
 const { initializeSocket } = require('./socket');
 const app = express()
-const ipAddressModel = require("./models/IpAddressModel")
 
 const server = http.createServer(app);
 
@@ -44,8 +43,8 @@ app.use((req, res, next) => {
 //     max: 100, // limit each IP to 100 requests per windowMs
 // });
 
-// Apply to all routes
-app.use(limiter);
+// // Apply to all routes
+// app.use(limiter);
 
 app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile);
 
