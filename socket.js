@@ -1,6 +1,8 @@
 require("dotenv").config();
 const socketIO = require('socket.io');
 const { transactionHistory, walletBalance } = require("./services/userWalletService")
+const { fetchBettingHistory } = require("./services/userHistoryService")
+const { fetchBettingLogs, fetchTransactionLogs } = require("./services/backOfficeServices")
 
 let io;
 const userSockets = {};
@@ -44,6 +46,30 @@ function initializeSocket(server) {
             try {
                 const userWalletBalance = await walletBalance(player_id);
                 socket.emit('walletBalanceUpdate', userWalletBalance);
+            } catch (error) {
+                console.error("Error fetching transaction history:", error);
+            }
+        });
+        socket.on('getUserBetHistory', async () => {
+            try {
+                const userBetHistory = await fetchBettingHistory(player_id);
+                socket.emit('betHistory', userBetHistory);
+            } catch (error) {
+                console.error("Error fetching transaction history:", error);
+            }
+        });
+        socket.on('getBettingLogs', async () => {
+            try {
+                const bettingLogs = await fetchBettingLogs();
+                socket.emit('bettingLogs', bettingLogs);
+            } catch (error) {
+                console.error("Error fetching transaction history:", error);
+            }
+        });
+        socket.on('getTransactionLogs', async () => {
+            try {
+                const transactionLogs = await fetchTransactionLogs();
+                socket.emit('transactionLogs', transactionLogs);
             } catch (error) {
                 console.error("Error fetching transaction history:", error);
             }

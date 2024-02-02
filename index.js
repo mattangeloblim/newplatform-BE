@@ -4,6 +4,7 @@ const port = process.env.PORT
 const http = require('http');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const { initializeSocket } = require('./socket');
 const app = express()
 
@@ -15,17 +16,34 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan('combined'));
 
-
 const Authentication = require("./routers/clientSide/Authentication");
 const gcashCashinApi = require("./routers/clientSide/gcashCashinAPI");
 const gcashNotificationApi = require("./routers/clientSide/GcashNotificationAPI");
 const redirectEGames = require("./routers/gameSide/breddasRedirectGamesRouter");
 const gameWalletIntegration = require("./routers/gameSide/breddasGamesRouter");
+const userDataProfile = require("./routers/clientSide/userDataProfile")
 const cookieParser = require('cookie-parser');
 
 app.use(cookieParser())
 
-app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi);
+
+//HEADERS FOR SECURITY MEASURES
+app.use((req, res, next) => {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000');
+    res.setHeader('Content-Security-Policy', 'default-src \'self\'');
+    next();
+});
+
+// RATE LIMITER TO AVOID BEING CONGESTED
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+});
+
+// Apply to all routes
+app.use(limiter);
+
+app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile);
 
 app.use("/redirect", redirectEGames);
 app.use("/", gameWalletIntegration);

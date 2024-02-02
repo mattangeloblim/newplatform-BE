@@ -12,17 +12,35 @@ socket.on('connect', () => {
 
     // Simulate a 'getTransactionHistory' request
     socket.emit('getTransactionHistory');
-    socket.emit('getWalletBalance')
+    socket.emit('getWalletBalance');
+    socket.emit('getUserBetHistory')
+    socket.emit('getBettingLogs')
+    socket.emit('getTransactionLogs')
 });
 
-// Listen for the server's 'transactionHistory' response
-socket.on('transactionHistory', (transactionList) => {
-    console.log('Received transaction history:', transactionList);
-});
+// // Listen for the server's 'transactionHistory' response
+// socket.on('transactionHistory', (transactionList) => {
+//     console.log('Received transaction history:', transactionList);
+// });
 
-// Listen for the server's 'walletBalanceUpdate' response
-socket.on('walletBalanceUpdate', (data) => {
-    console.log('Received wallet balance:', data);
+// // Listen for the server's 'walletBalanceUpdate' response
+// socket.on('walletBalanceUpdate', (data) => {
+//     console.log('Received wallet balance:', data);
+// });
+
+// // Listen for the server's 'userbettingHistory' response
+// socket.on('betHistory', (bettings) => {
+//   console.log('Received transaction history:', bettings);
+// });
+
+// // Listen for the server's 'userbettingHistory' response
+// socket.on('bettingLogs', (bets) => {
+//   console.log('Received transaction history:', bets);
+// });
+
+// Listen for the server's 'userbettingHistory' response
+socket.on('transactionLogs', (transaction) => {
+  console.log('Received transaction history:', transaction);
 });
 
 // Listen for disconnection

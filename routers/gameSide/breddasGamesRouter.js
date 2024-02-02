@@ -1,9 +1,6 @@
 const express = require("express")
 const router = express.Router()
 const Wallet = require("../../models/WalletModel")
-// const GameProvider = require("../../models/GameProviderModel")
-// const ProviderGameList = require("../../models/ProviderGameListModel")
-// const GamePlatform = require("../../models/GamePlatformsModel")
 const BettingHistory = require("../../models/BettingHistoryModel")
 const cookieParser = require('cookie-parser');
 const BettingResult = require("../../models/BettingResultModel");
@@ -105,7 +102,6 @@ router.post("/bingo-games/bet", async (req, res) => {
 router.post("/bingo-games/win", async (req, res) => {
     try {
         const { user_id, amount, transaction_id, round_id, win_type } = req.body;
-        // console.log(win_type)
 
         const findUserWallet = await Wallet.findOne({
             where: {
