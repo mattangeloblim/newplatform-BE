@@ -36,12 +36,24 @@ router.post("/bingo-games/wallet", async (req, res) => {
 
 router.post("/bingo-games/bet", async (req, res) => {
     try {
-        //NEEDS TO FINISH THE INTEGRITY OF GAME_TYPE
-        // const { game_provider_id, game_provider_name, game_name } = req.query
         const { user_id, token, amount, transaction_id, round_id, jackpot_contribution, game_type } = req.body
 
         const bet_id = Date.now().toString();
-        console.log(game_type)
+
+        const gameTypeMapping = {
+            "13 BALL BINGO WEB": "13 Ball Bingo",
+            "BINGO PARES WEB": "Bingo Pares",
+            "BINGO PERYAHAN WEB": "Bingo Peryahan",
+            "BINGO SWERTRES WEB": "Bingo Swertres",
+            "DRAGON VS TIGER BINGO WEB": "Dragon vs Tiger",
+            "FORTUNE 30 WEB": "Fortune 30",
+            "GOLD FARM WEB": "Gold Farm",
+            "GOLDEN ERA WEB": "Golden Era",
+            "PIRATE BABES WEB": "Pirate Babes",
+            "SEA RICHES WEB": "Sea Riches"
+        };
+
+        const mappedGameType = gameTypeMapping[game_type];
 
         const findUserWallet = await Wallet.findOne({
             where: {
@@ -56,9 +68,9 @@ router.post("/bingo-games/bet", async (req, res) => {
 
         await BettingHistory.create({
             player_id: user_id,
-            // game_provider_id
-            // game_provider_name: provider_name
-            // game_name: game_name
+            game_provider_id: 888,
+            game_provider_name: "DG",
+            game_name: mappedGameType,
             amount: amount,
             wallet_id: userWalletId,
             bet_id: bet_id,
@@ -93,7 +105,7 @@ router.post("/bingo-games/bet", async (req, res) => {
 router.post("/bingo-games/win", async (req, res) => {
     try {
         const { user_id, amount, transaction_id, round_id, win_type } = req.body;
-        console.log(win_type)
+        // console.log(win_type)
 
         const findUserWallet = await Wallet.findOne({
             where: {
