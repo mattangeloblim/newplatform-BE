@@ -16,4 +16,19 @@ async function depositUserWalletController(req, res) {
     }
 }
 
-module.exports = { depositUserWalletController }
+async function transferAffiliationBalanceController(req, res) {
+    try {
+        const player_id = req.user.uid;
+        const amount = req.body.amount
+
+        await walletService.AffiliationBalancetransfer(player_id, amount)
+
+        res.status(200).json({ message: "Balance Transfer Successfully"});
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+module.exports = { depositUserWalletController, transferAffiliationBalanceController }

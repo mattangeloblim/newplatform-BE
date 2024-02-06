@@ -21,6 +21,7 @@ const Ip_Address = sequelize.define('Ip_Address', {
         allowNull: false,
     }
 });
-Ip_Address.sync()
+
+// Ip_Address.sync()
 
 module.exports = Ip_Address;

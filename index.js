@@ -22,6 +22,7 @@ const gcashNotificationApi = require("./routers/clientSide/GcashNotificationAPI"
 const redirectEGames = require("./routers/gameSide/breddasRedirectGamesRouter");
 const gameWalletIntegration = require("./routers/gameSide/breddasGamesRouter");
 const userDataProfile = require("./routers/clientSide/userDataProfile")
+const PlatformTransaction = require("./routers/clientSide/PlatformTransaction")
 const cookieParser = require('cookie-parser');
 
 app.use(cookieParser())
@@ -46,7 +47,7 @@ app.use((req, res, next) => {
 // // Apply to all routes
 // app.use(limiter);
 
-app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile);
+app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile, PlatformTransaction);
 
 app.use("/redirect", redirectEGames);
 app.use("/", gameWalletIntegration);

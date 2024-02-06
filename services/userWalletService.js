@@ -1,8 +1,9 @@
 const TransactionModel = require("../models/TransactionModel");
 const GcashLogsModel = require("../models/GcashLogsModels")
 const Wallet = require("../models/WalletModel");
-const { generateTransactionId } = require("../utils/TokenGenerated")
-const axios = require("axios")
+const { generateTransactionId, generateTransferId } = require("../utils/TokenGenerated")
+const axios = require("axios");
+const Affiliation = require("../models/AffiliationModel");
 
 async function depositUserWallet(keyData, player_id, amount) {
     const { wallet_id, gateway_payment } = keyData
@@ -76,6 +77,62 @@ async function transactionHistory(player_id) {
 
 }
 
+async function AffiliationBalancetransfer(player_id, amount) {
+    try {
+        const balanceWithdraw = await Affiliation.findOne({
+            where: {
+                player_id: player_id
+            },
+            attributes: ['affiliation_balance', 'wallet_id']
+        });
+
+        const current_balance = balanceWithdraw.dataValues.affiliation_balance;
+        const walletID = balanceWithdraw.dataValues.wallet_id
+
+        if (current_balance < amount) {
+            throw new Error("Insufficient balance for the transfer");
+        }
+
+        const updatedBalance = parseInt(current_balance - amount, 10);
+
+        await TransactionModel.create({
+            player_id: player_id,
+            amount: amount,
+            wallet_id: walletID,
+            transaction_type: "affiliation balance to wallet",
+            transaction_id: generateTransferId(),
+            gateway_payment: "NA",
+            status: "SUCCESS"
+        });
+
+        await Affiliation.update({ affiliation_balance: updatedBalance }, {
+            where: {
+                player_id: player_id
+            }
+        });
+
+        const findWallet = await Wallet.findOne({
+            where: {
+                player_id: player_id
+            }
+        })
+
+        const currentWalletBalance = findWallet.dataValues.wallet_balance
+        const updatedWallet = parseInt(currentWalletBalance + amount, 10)
+
+        const walletDataBalance = await Wallet.update({ wallet_balance: updatedWallet }, {
+            where: {
+                player_id: player_id
+            }
+        })
+
+        return walletDataBalance
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 async function walletBalance(player_id) {
     try {
         const userWalletBalance = await Wallet.findOne({
@@ -91,4 +148,4 @@ async function walletBalance(player_id) {
 
 }
 
-module.exports = { depositUserWallet, transactionHistory, walletBalance }
+module.exports = { depositUserWallet, transactionHistory, walletBalance, AffiliationBalancetransfer }

@@ -13,6 +13,10 @@ const Affiliation = sequelize.define("Affiliation", {
         allowNull: false,
         primaryKey: true,
     },
+    wallet_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     token: {
         type: DataTypes.STRING,
         allowNull: false,
