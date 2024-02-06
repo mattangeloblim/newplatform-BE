@@ -27,7 +27,6 @@ router.post('/breddas/game-url', async (req, res) => {
     });
 
     const provider_name = ProviderName.dataValues.game_provider_name;
-
     const api_key = ProviderName.dataValues.provider_api_key;
 
     // Set cookies

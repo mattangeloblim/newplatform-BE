@@ -25,11 +25,30 @@ async function registerUserService(userData) {
         throw new Error("Username or email already exists");
     }
 
+    const wallet_id = generateWalletId();
+
     const player_id = uuidv4();
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const user = await User.create({ ...userData, player_id, password: hashedPassword });
-    await createAffiliation(player_id);
-    await connectWallet(player_id)
+    const inputToken = userData.token
+
+    const findAffiliation = await Affiliation.findOne({
+        where: {
+            token: inputToken
+        },
+        attributes: ['affiliate_count']
+    })
+
+    const currentCount = findAffiliation.dataValues.affiliate_count + 1
+
+    await Affiliation.update({ affiliate_count: currentCount }, {
+        where: {
+            token: inputToken
+        }
+    })
+
+    const user = await User.create({ ...userData, player_id, password: hashedPassword, referral_token: inputToken });
+    await createAffiliation(player_id, wallet_id);
+    await connectWallet(player_id, wallet_id)
 
     const player_email = userData.email;
     const Name = userData.name
@@ -64,13 +83,14 @@ async function registerUserService(userData) {
     return user;
 }
 
-async function createAffiliation(player_id) {
+async function createAffiliation(player_id, wallet_id) {
     const affiliation_token = generateAffiliationToken();
     const affiliation_percentage = 1;
 
     // Additional properties for the Affiliation model
     const affiliationData = {
         player_id,
+        wallet_id: wallet_id,
         token: affiliation_token,
         affiliation_percentage,
         affiliation_balance: 0,
@@ -81,8 +101,7 @@ async function createAffiliation(player_id) {
     await Affiliation.create(affiliationData);
 }
 
-async function connectWallet(player_id) {
-    const wallet_id = generateWalletId();
+async function connectWallet(player_id, wallet_id) {
 
     const walletData = {
         player_id,
@@ -103,6 +122,7 @@ async function saveOTP(player_id, otps, account) {
 
     await OTP.create(OTPData);
 }
+
 async function verifyUserService(verificationData) {
     const { player_id, otpsent } = verificationData
 
