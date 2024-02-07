@@ -25,6 +25,10 @@ const userDataProfile = require("./routers/clientSide/userDataProfile")
 const PlatformTransaction = require("./routers/clientSide/PlatformTransaction")
 const cookieParser = require('cookie-parser');
 
+
+// ADMIN BACKOFFICE
+const adminLoginRoute = require("./routers/adminSide/adminLoginRoute")
+
 app.use(cookieParser())
 
 // Set trust proxy to only trust the X-Forwarded-For header from a specific IP address or network.
@@ -47,7 +51,7 @@ app.use((req, res, next) => {
 // // Apply to all routes
 // app.use(limiter);
 
-app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile, PlatformTransaction);
+app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile, PlatformTransaction, adminLoginRoute);
 
 app.use("/redirect", redirectEGames);
 app.use("/", gameWalletIntegration);

@@ -13,12 +13,8 @@ async function fetchBettingHistory(player_id) {
         }
     });
 
-    console.log(userBettingResult)
-
     const enhancedBettingHistory = userBettingHistory.map(history => {
         const matchingResult = userBettingResult.find(result => result.round_id === history.round_id);
-        console.log(matchingResult)
-
         if (matchingResult) {
             return {
                 ...history.dataValues,

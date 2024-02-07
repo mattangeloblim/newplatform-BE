@@ -11,9 +11,13 @@ router.post('/breddas/game-url', async (req, res) => {
 
     const ProviderGame = await ProviderGameList.findOne({
       where: {
-        game_code: game
+        game_code: game,
+        status: 1
       }
     });
+    if(!ProviderGame){
+      return res.status(400).json({message: "Game is Currently On Maintenance"})
+    }
 
     const game_name = ProviderGame.dataValues.game_name;
     const game_type = ProviderGame.dataValues.game_type;

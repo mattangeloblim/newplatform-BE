@@ -9,7 +9,7 @@ const User = require("../../models/UserModel");
 
 router.use(cookieParser());
 
-router.post("/bingo-games/wallet", async (req, res) => {
+router.get("/bingo-games/wallet", async (req, res) => {
     try {
         const { user_id, token } = req.body
 
