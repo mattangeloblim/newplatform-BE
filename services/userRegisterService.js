@@ -29,24 +29,26 @@ async function registerUserService(userData) {
 
     const player_id = uuidv4();
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const inputToken = userData.token
 
-    const findAffiliation = await Affiliation.findOne({
-        where: {
-            token: inputToken
-        },
-        attributes: ['affiliate_count']
-    })
+    if (userData.token) {
+        const inputToken = userData.token
+        const findAffiliation = await Affiliation.findOne({
+            where: {
+                token: inputToken
+            },
+            attributes: ['affiliate_count']
+        })
 
-    const currentCount = findAffiliation.dataValues.affiliate_count + 1
+        const currentCount = findAffiliation.dataValues.affiliate_count + 1
 
-    await Affiliation.update({ affiliate_count: currentCount }, {
-        where: {
-            token: inputToken
-        }
-    })
+        await Affiliation.update({ affiliate_count: currentCount }, {
+            where: {
+                token: inputToken
+            }
+        })
+    }
 
-    const user = await User.create({ ...userData, player_id, password: hashedPassword, referral_token: inputToken });
+    const user = await User.create({ ...userData, player_id, password: hashedPassword, referral_token: userData.token });
     await createAffiliation(player_id, wallet_id);
     await connectWallet(player_id, wallet_id)
 
