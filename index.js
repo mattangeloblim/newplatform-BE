@@ -23,11 +23,13 @@ const redirectEGames = require("./routers/gameSide/breddasRedirectGamesRouter");
 const gameWalletIntegration = require("./routers/gameSide/breddasGamesRouter");
 const userDataProfile = require("./routers/clientSide/userDataProfile")
 const PlatformTransaction = require("./routers/clientSide/PlatformTransaction")
+
 const cookieParser = require('cookie-parser');
 
 
 // ADMIN BACKOFFICE
 const adminLoginRoute = require("./routers/adminSide/adminLoginRoute")
+const adminRolesRoute = require("./routers/adminSide/adminRolesRoute")
 
 app.use(cookieParser())
 
@@ -51,7 +53,7 @@ app.use((req, res, next) => {
 // // Apply to all routes
 // app.use(limiter);
 
-app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile, PlatformTransaction, adminLoginRoute);
+app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile, PlatformTransaction, adminLoginRoute, adminRolesRoute);
 
 app.use("/redirect", redirectEGames);
 app.use("/", gameWalletIntegration);
