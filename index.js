@@ -55,8 +55,8 @@ app.use((req, res, next) => {
 
 app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile, PlatformTransaction, adminLoginRoute, adminRolesRoute);
 
-app.use("/redirect", redirectEGames);
-app.use("/", gameWalletIntegration);
+app.use("/redirect", CorsMiddleware, redirectEGames);
+app.use("/", CorsMiddleware, gameWalletIntegration);
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
