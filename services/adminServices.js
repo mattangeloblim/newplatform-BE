@@ -3,6 +3,8 @@
 const AdminModel = require("../models/AdminModel")
 const Roles = require("../models/RolesModel");
 const bcrypt = require('bcrypt');
+const User = require("../models/UserModel");
+const sequelize = require("sequelize")
 
 async function authenticateAdmin(username, password) {
     const admin = await AdminModel.findOne({ where: { username } });
@@ -38,8 +40,25 @@ async function editRolePermissions(roleName, newPermissions) {
     return role;
 }
 
+async function fetchNumberOfRegisteredUsersPerDay() {
+    try {
+        const registeredUsersPerDay = await User.findAll({
+            attributes: [
+                [sequelize.fn('COUNT', sequelize.col('id')), 'userCount'],
+                [sequelize.fn('DATE', sequelize.col('updatedAt')), 'date'],
+            ],
+            group: [sequelize.fn('DATE', sequelize.col('updatedAt'))],
+        });
+
+        return registeredUsersPerDay;
+    } catch (error) {
+        console.error('Error fetching registered users per day:', error);
+        throw error; // Handle the error as needed
+    }
+}
 
 module.exports = {
     authenticateAdmin,
-    editRolePermissions
+    editRolePermissions,
+    fetchNumberOfRegisteredUsersPerDay
 };

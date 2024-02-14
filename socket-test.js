@@ -16,11 +16,12 @@ socket.on('connect', () => {
     socket.emit('getUserBetHistory')
     socket.emit('getBettingLogs')
     socket.emit('getTransactionLogs')
+    socket.emit('getActiveUsers')
 });
 
-// // Listen for the server's 'transactionHistory' response
-// socket.on('transactionHistory', (transactionList) => {
-//     console.log('Received transaction history:', transactionList);
+// Listen for the server's 'transactionHistory' response
+// socket.on('activeUsersNum', (transactionList) => {
+//     console.log('Received users count:', transactionList);
 // });
 
 // // Listen for the server's 'walletBalanceUpdate' response
@@ -39,9 +40,9 @@ socket.on('connect', () => {
 // });
 
 // Listen for the server's 'userbettingHistory' response
-socket.on('transactionLogs', (transaction) => {
-  console.log('Received transaction history:', transaction);
-});
+// socket.on('transactionLogs', (transaction) => {
+//   console.log('Received transaction history:', transaction);
+// });
 
 // Listen for disconnection
 socket.on('disconnect', () => {

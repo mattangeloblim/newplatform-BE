@@ -3,6 +3,7 @@ const socketIO = require('socket.io');
 const { transactionHistory, walletBalance } = require("./services/userWalletService")
 const { fetchBettingHistory } = require("./services/userHistoryService")
 const { fetchBettingLogs, fetchTransactionLogs } = require("./services/backOfficeServices")
+const { fetchNumberOfRegisteredUsersPerDay } = require("./services/adminServices")
 
 let io;
 const userSockets = {};
@@ -72,6 +73,14 @@ function initializeSocket(server) {
                 socket.emit('transactionLogs', transactionLogs);
             } catch (error) {
                 console.error("Error fetching transaction history:", error);
+            }
+        });
+        socket.on('getActiveUsers', async () => {
+            try {
+                const activeUsers = await fetchNumberOfRegisteredUsersPerDay();
+                socket.emit('activeUsersNum', activeUsers);
+            } catch (error) {
+                console.error("Error fetching activeUsersNum:", error);
             }
         });
     });
