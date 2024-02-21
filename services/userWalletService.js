@@ -6,31 +6,36 @@ const axios = require("axios");
 const Affiliation = require("../models/AffiliationModel");
 
 async function depositUserWallet(keyData, player_id, amount) {
-    const { wallet_id, gateway_payment } = keyData
+    const { gateway_payment } = keyData
     const transaction_id = generateTransactionId();
+
+    const findWalletId = await Wallet.findOne({
+        where: {
+            player_id: player_id
+        }
+    })
 
     const gcashApiUrl = "https://stagingapi.ops-gate.com/gcash/gcash-pay/create-order";
 
     if (gateway_payment === "GCASH") {
-        // NEED TO BE CHANGE
         const gcashData = {
             user_id: transaction_id,
             amount,
-            merchant_name: "POS",
-            merchant_id: "62",
-            client_id: "b2895265-fbd5-465e-a4cb-68270f74394b",
+            merchant_name: "Platform",
+            merchant_id: "64",
+            client_id: "5f241805-6267-4dea-b109-1a39f5a1e13f",
         }
         const header = {
-            Authorization: `Bearer 88e786c1-a1d1-4c72-8a22-8703675d50cc`
+            Authorization: `Bearer 022856bb-e7c3-4cfe-8ade-dfa7bb862193`
         };
 
         try {
             const gcashResponse = await axios.post(gcashApiUrl, gcashData, { headers: header });
 
-            const depositFund = await TransactionModel.create({
+            await TransactionModel.create({
                 player_id,
                 amount,
-                wallet_id,
+                wallet_id: findWalletId.wallet_id,
                 transaction_type: "Deposit",
                 transaction_id: transaction_id,
                 gateway_payment: gateway_payment,
@@ -39,7 +44,7 @@ async function depositUserWallet(keyData, player_id, amount) {
 
             if (gcashResponse.data.status === 1) {
                 const gcashResponseReturn = gcashResponse.data.data;
-                const insertGcashLogRow = await GcashLogsModel.create({
+                await GcashLogsModel.create({
                     user_id: gcashResponseReturn.user_id,
                     amount: gcashResponseReturn.amount,
                     merchant_id: gcashResponseReturn.merchant_id,
@@ -74,7 +79,6 @@ async function transactionHistory(player_id) {
     } catch (error) {
         console.error(error)
     }
-
 }
 
 async function AffiliationBalancetransfer(player_id, amount) {
@@ -141,11 +145,11 @@ async function walletBalance(player_id) {
             },
             attributes: ['wallet_balance']
         });
+
         return userWalletBalance;
     } catch (error) {
         console.error(error)
     }
-
 }
 
 module.exports = { depositUserWallet, transactionHistory, walletBalance, AffiliationBalancetransfer }

@@ -3,7 +3,7 @@ const socketIO = require('socket.io');
 const { transactionHistory, walletBalance } = require("./services/userWalletService")
 const { fetchBettingHistory } = require("./services/userHistoryService")
 const { fetchBettingLogs, fetchTransactionLogs } = require("./services/backOfficeServices")
-const { fetchNumberOfRegisteredUsersPerDay } = require("./services/adminServices")
+const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles } = require("./services/adminServices")
 
 let io;
 const userSockets = {};
@@ -11,7 +11,7 @@ const userSockets = {};
 function initializeSocket(server) {
     io = socketIO(server, {
         cors: {
-            origin: true, // Allow connections from any origin
+            origin: true, 
             methods: ["GET", "POST"]
         }
     });
@@ -45,6 +45,7 @@ function initializeSocket(server) {
 
         socket.on('getWalletBalance', async () => {
             try {
+                
                 const userWalletBalance = await walletBalance(player_id);
                 socket.emit('walletBalanceUpdate', userWalletBalance);
             } catch (error) {
@@ -79,6 +80,22 @@ function initializeSocket(server) {
             try {
                 const activeUsers = await fetchNumberOfRegisteredUsersPerDay();
                 socket.emit('activeUsersNum', activeUsers);
+            } catch (error) {
+                console.error("Error fetching activeUsersNum:", error);
+            }
+        });
+        socket.on('getAllAdmin', async () => {
+            try {
+                const activeAdmins = await fetchAdminRegister();
+                socket.emit('activeAdmin', activeAdmins);
+            } catch (error) {
+                console.error("Error fetching activeUsersNum:", error);
+            }
+        });
+        socket.on('getAdminRoles', async () => {
+            try {
+                const adminRoles = await fetchAdminRoles();
+                socket.emit('activeAdmin', adminRoles);
             } catch (error) {
                 console.error("Error fetching activeUsersNum:", error);
             }
