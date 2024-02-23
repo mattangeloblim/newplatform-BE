@@ -2,7 +2,6 @@ const BettingHistory = require("../models/BettingHistoryModel")
 const BettingResult = require("../models/BettingResultModel");
 const Transaction = require("../models/TransactionModel");
 
-
 async function fetchBettingLogs() {
     const userBettingHistory = await BettingHistory.findAll();
     const userBettingResult = await BettingResult.findAll();

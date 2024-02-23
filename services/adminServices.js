@@ -7,6 +7,7 @@ const User = require("../models/UserModel");
 const sequelize = require("sequelize");
 const Admin = require("../models/AdminModel");
 const Roles_Permission = require("../models/RolesModel");
+const Wallet = require("../models/WalletModel");
 
 async function authenticateAdmin(username, password) {
     const admin = await AdminModel.findOne({ where: { username } });
@@ -65,7 +66,7 @@ async function fetchAdminRegister() {
         return adminRegistered;
     } catch (error) {
         console.error('Error fetching registered users per day:', error);
-        throw error; 
+        throw error;
     }
 }
 
@@ -75,7 +76,54 @@ async function fetchAdminRoles() {
         return roles;
     } catch (error) {
         console.error('Error fetching permission', error);
-        throw error; 
+        throw error;
+    }
+}
+
+async function fetchUsers() {
+    try {
+        const Users = await User.findAll();
+        return Users
+    } catch (error) {
+        console.error('Error Fetching User', error)
+        throw error;
+    }
+}
+
+async function fetchUserProfile(player_id) {
+    try {
+        const ProfileUser = await User.findOne({
+            where: {
+                player_id: player_id
+            }
+        })
+        const ProfileWallet = await Wallet.findOne({
+            where:{
+                player_id:player_id
+            }
+        })
+
+        const formattedReturn = {
+            PlayerId: ProfileUser.player_id,
+            Username: ProfileUser.username,
+            Email:ProfileUser.email,
+            Phone: ProfileUser.phone,
+            Birthdate: ProfileUser.birthdate,
+            Name: ProfileUser.name,
+            isVerified: ProfileUser.isVerified,
+            isActive: ProfileUser.isActive,
+            DateReg: ProfileUser.createdAt,
+            Wallet: ProfileWallet.wallet_balance,
+            OverallDep: ProfileWallet.overall_deposit,
+            OverallWithdraw: ProfileWallet.overall_withdraw,
+            first_deposit: ProfileWallet.first_deposit_at
+        }
+
+        return formattedReturn
+
+    } catch (error) {
+        console.error('Error Fetching profile', error)
+        throw error;
     }
 }
 
@@ -84,5 +132,7 @@ module.exports = {
     editRolePermissions,
     fetchNumberOfRegisteredUsersPerDay,
     fetchAdminRegister,
-    fetchAdminRoles
+    fetchAdminRoles,
+    fetchUsers,
+    fetchUserProfile
 };
