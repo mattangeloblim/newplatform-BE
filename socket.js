@@ -23,20 +23,18 @@ function initializeSocket(server) {
         userSockets[player_id] = socket;
 
         const numberOfUsers = Object.keys(userSockets).length;
-        console.log("Number of connected users:", numberOfUsers);
 
         socket.on('disconnect', () => {
             delete userSockets[player_id];
 
             const numberOfUsers = Object.keys(userSockets).length;
-            console.log("Number of connected users:", numberOfUsers);
 
             io.emit('numberOfUsers', numberOfUsers);
         });
 
-        socket.on('getTransactionHistory', async () => {
+        socket.on('getTransactionHistory', async (profile_id) => {
             try {
-                const transactionList = await transactionHistory(player_id);
+                const transactionList = await transactionHistory(profile_id);
                 socket.emit('transactionHistory', transactionList);
             } catch (error) {
                 console.error("Error fetching transaction history:", error);
@@ -49,12 +47,12 @@ function initializeSocket(server) {
                 const userWalletBalance = await walletBalance(player_id);
                 socket.emit('walletBalanceUpdate', userWalletBalance);
             } catch (error) {
-                console.error("Error fetching transaction history:", error);
+                console.error("Error fetching wallet", error);
             }
         });
-        socket.on('getUserBetHistory', async () => {
+        socket.on('getUserBetHistory', async (profile_id) => {
             try {
-                const userBetHistory = await fetchBettingHistory(player_id);
+                const userBetHistory = await fetchBettingHistory(profile_id);
                 socket.emit('betHistory', userBetHistory);
             } catch (error) {
                 console.error("Error fetching transaction history:", error);
