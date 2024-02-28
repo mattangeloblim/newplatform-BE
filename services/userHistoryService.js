@@ -7,6 +7,7 @@ async function fetchBettingHistory(player_id) {
             player_id: player_id
         }
     });
+    
     const userBettingResult = await BettingResult.findAll({
         where: {
             player_id: player_id

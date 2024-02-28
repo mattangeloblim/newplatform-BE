@@ -4,6 +4,9 @@ const moment = require('moment-timezone');
 const GcashLogsModel = require("../../models/GcashLogsModels")
 const TransactionModel = require("../../models/TransactionModel")
 const WalletModel = require("../../models/WalletModel")
+const socketIOClient  = require('socket.io-client');
+
+const socket = socketIOClient('http://54.169.218.142');
 
 router.post("/gcash/notification-url", async (req, res) => {
     try {
@@ -12,6 +15,8 @@ router.post("/gcash/notification-url", async (req, res) => {
         if (status !== "SUCCESS" && status !== "INIT" && status !== "CLOSED") {
             return res.status(400).json({ error: "Invalid 'status' value" });
         }
+
+        socket.emit("getWalletBalance", user_id)
 
         const phTime = moment().tz('Asia/Manila').format("YYYY-MM-DD HH:mm:ss")
 

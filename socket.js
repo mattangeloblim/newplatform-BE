@@ -21,7 +21,6 @@ function initializeSocket(server) {
         const player_id = socket.handshake.query.player_id;
 
         userSockets[player_id] = socket;
-
         const numberOfUsers = Object.keys(userSockets).length;
 
         socket.on('disconnect', () => {
