@@ -171,8 +171,6 @@ router.post("/bingo-games/win", async (req, res) => {
 
         emitWalletUpdate(user_id, updatedBalance)
 
-        
-
         const response = {
             currency: "PHP",
             balance: updatedBalance,
