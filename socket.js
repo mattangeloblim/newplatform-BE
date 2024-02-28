@@ -40,10 +40,10 @@ function initializeSocket(server) {
             }
         });
 
-        socket.on('getWalletBalance', async () => {
+        socket.on('getWalletBalance', async (profile_id) => {
             try {
                 
-                const userWalletBalance = await walletBalance(player_id);
+                const userWalletBalance = await walletBalance(profile_id);
                 socket.emit('walletBalanceUpdate', userWalletBalance);
             } catch (error) {
                 console.error("Error fetching wallet", error);
@@ -126,5 +126,15 @@ function getIO() {
     return io;
 }
 
+function emitWalletUpdate(userId, balance) {
+    const socket = userSockets[userId];
+  
+    if (socket) {
+      socket.emit("walletCashinUpdate", { balance });
+      console.log(balance)
+    } else {
+      console.error(`Socket not found for user ID: ${userId}`);
+    }
+  }
 
-module.exports = { initializeSocket, getIO };
+module.exports = { initializeSocket, getIO, emitWalletUpdate};

@@ -4,9 +4,8 @@ const moment = require('moment-timezone');
 const GcashLogsModel = require("../../models/GcashLogsModels")
 const TransactionModel = require("../../models/TransactionModel")
 const WalletModel = require("../../models/WalletModel")
-const socketIOClient  = require('socket.io-client');
+const { emitWalletUpdate } = require("../../socket")
 
-const socket = socketIOClient('http://54.169.218.142');
 
 router.post("/gcash/notification-url", async (req, res) => {
     try {
@@ -15,8 +14,6 @@ router.post("/gcash/notification-url", async (req, res) => {
         if (status !== "SUCCESS" && status !== "INIT" && status !== "CLOSED") {
             return res.status(400).json({ error: "Invalid 'status' value" });
         }
-
-        socket.emit("getWalletBalance", user_id)
 
         const phTime = moment().tz('Asia/Manila').format("YYYY-MM-DD HH:mm:ss")
 
@@ -79,6 +76,8 @@ router.post("/gcash/notification-url", async (req, res) => {
                         overall_deposit: findUserWallet.overall_deposit + parseFloat(amount)
                     });
                 }
+
+                emitWalletUpdate(TransactionRow.player_id, findUserWallet.wallet_balance )
             }
 
             return res.status(200).json({ success: true, message: "Status updated successfully", notificationResponse });
@@ -86,6 +85,8 @@ router.post("/gcash/notification-url", async (req, res) => {
             // No rows were updated
             return res.status(404).json({ success: false, message: "Record not found" });
         }
+
+
 
     } catch (error) {
         console.error(error)
