@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const BettingResult = require("../../models/BettingResultModel");
 const Affiliation = require("../../models/AffiliationModel");
 const User = require("../../models/UserModel");
+const {emitWalletUpdate} = require("../../socket")
 
 router.use(cookieParser());
 
@@ -87,6 +88,8 @@ router.post("/bingo-games/bet", async (req, res) => {
             }
         );
 
+        emitWalletUpdate(user_id, updatedBalance)
+
         const checkUser = await User.findOne({
             where: {
                 player_id: user_id
@@ -165,6 +168,10 @@ router.post("/bingo-games/win", async (req, res) => {
                 }
             }
         );
+
+        emitWalletUpdate(user_id, updatedBalance)
+
+        
 
         const response = {
             currency: "PHP",
