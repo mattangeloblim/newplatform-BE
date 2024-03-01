@@ -17,9 +17,9 @@ async function loginUser(credentialsData, res) {
     if (!user) {
         throw new Error("Invalid username");
     }
-    if (user.isVerified !== 1) {
-        throw new Error("User is not verified yet");
-    }
+    // if (user.isVerified !== 1) {
+    //     throw new Error("User is not verified yet");
+    // }
     // Compare the provided password with the hashed password stored in the database
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
@@ -39,7 +39,7 @@ async function loginUser(credentialsData, res) {
         };
 
         const token = jwt.sign(payload, process.env.SECRET_KEY, {
-            expiresIn: "8h",
+            expiresIn: null,
         });
 
         res.setHeader("Authorization", `Bearer ${token}`)

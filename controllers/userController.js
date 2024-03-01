@@ -8,6 +8,16 @@ async function registerUser(req, res) {
     try {
         const userData = req.body;
         const user = await registerService.registerUserService(userData);
+        const userIPAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+        console.log(`User with username ${userData.username} logged in from IP address: ${userIPAddress}`);
+
+        await ipAddressModel.create({
+            user: userData.username,
+            ipAddress: userIPAddress,
+            action: 'Register'
+        })
+
         res.status(201).json({ success: true, user });
     } catch (error) {
         console.error(error);

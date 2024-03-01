@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 
 const { v4: uuidv4 } = require('uuid');
 const { generateAffiliationToken, generateWalletId } = require("../utils/TokenGenerated");
-const generateOTP = require("../utils/OTP")
+// const generateOTP = require("../utils/OTP")
 
 async function registerUserService(userData) {
 
@@ -52,35 +52,35 @@ async function registerUserService(userData) {
     await createAffiliation(player_id, wallet_id);
     await connectWallet(player_id, wallet_id)
 
-    const player_email = userData.email;
-    const Name = userData.name
-    const OTP = generateOTP()
+    // const player_email = userData.email;
+    // const Name = userData.name
+    // const OTP = generateOTP()
 
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: "foodbud4@gmail.com", // Your email address
-            pass: "rajt zlul xrjx zani", // Your email password
-        },
-    });
+    // const transporter = nodemailer.createTransport({
+    //     service: "gmail",
+    //     auth: {
+    //         user: "foodbud4@gmail.com", // Your email address
+    //         pass: "rajt zlul xrjx zani", // Your email password
+    //     },
+    // });
 
-    const mailOptions = {
-        from: "foodbud4@gmail.com",
-        to: player_email,
-        subject: "Registration Successful",
-        text: `Dear ${Name},\n\nThank you for registering! To verify your account, please verify your account using this code ${OTP}`,
-    };
+    // const mailOptions = {
+    //     from: "foodbud4@gmail.com",
+    //     to: player_email,
+    //     subject: "Registration Successful",
+    //     text: `Dear ${Name},\n\nThank you for registering! To verify your account, please verify your account using this code ${OTP}`,
+    // };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.error(error);
-            res.status(500).json({ message: "Error sending email" });
-        } else {
-            const account = "email"
-            saveOTP(player_id, OTP, account)
-            console.log("Email sent: " + info.response);
-        }
-    });
+    // transporter.sendMail(mailOptions, function (error, info) {
+    //     if (error) {
+    //         console.error(error);
+    //         res.status(500).json({ message: "Error sending email" });
+    //     } else {
+    //         const account = "email"
+    //         saveOTP(player_id, OTP, account)
+    //         console.log("Email sent: " + info.response);
+    //     }
+    // });
 
     return user;
 }

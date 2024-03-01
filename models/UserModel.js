@@ -28,12 +28,12 @@ const User = sequelize.define("User", {
     },
     name: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     email: {
         type: DataTypes.STRING,
-        primaryKey:true,
-        allowNull: false
+        // primaryKey:true,
+        allowNull: true
     },
     phone: {
         type: DataTypes.STRING,
@@ -56,7 +56,7 @@ const User = sequelize.define("User", {
     },
     birthdate: {
         type: DataTypes.DATEONLY,
-        allowNull: false
+        allowNull: true
     },
     referral_token: {
         type: DataTypes.STRING,
