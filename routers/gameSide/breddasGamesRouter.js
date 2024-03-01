@@ -182,7 +182,7 @@ router.post("/bingo-games/win", async (req, res) => {
             console.log("dis game", findGame.game_name)
             setTimeout(() => {
                 emitWalletUpdate(user_id, updatedBalance);
-            }, 5000); 
+            }, 7000); 
         } else {
             console.log("dat game", findGame.game_name)
             emitWalletUpdate(user_id, updatedBalance);
