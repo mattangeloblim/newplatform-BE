@@ -39,7 +39,7 @@ async function loginUser(credentialsData, res) {
         };
 
         const token = jwt.sign(payload, process.env.SECRET_KEY, {
-            expiresIn: null,
+            expiresIn: '8h',
         });
 
         res.setHeader("Authorization", `Bearer ${token}`)
