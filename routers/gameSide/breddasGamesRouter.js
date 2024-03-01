@@ -178,7 +178,7 @@ router.post("/bingo-games/win", async (req, res) => {
             }
         );
 
-        if (findGame.game_name === "Dragon Vs Tiger") {
+        if (findGame.game_name === "Dragon vs Tiger") {
             console.log("dis game", findGame.game_name)
             setTimeout(() => {
                 emitWalletUpdate(user_id, updatedBalance);
