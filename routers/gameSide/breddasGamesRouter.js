@@ -178,13 +178,11 @@ router.post("/bingo-games/win", async (req, res) => {
             }
         );
 
-        if (findGame.game_name === "Dragon vs Tiger") {
-            console.log("dis game", findGame.game_name)
+        if (findGame.game_name === "Dragon vs Tiger" || findGame.game_name === "13 Ball Bingo") {
             setTimeout(() => {
                 emitWalletUpdate(user_id, updatedBalance);
             }, 7000); 
         } else {
-            console.log("dat game", findGame.game_name)
             emitWalletUpdate(user_id, updatedBalance);
         }
 
