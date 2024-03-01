@@ -156,7 +156,7 @@ router.post("/bingo-games/win", async (req, res) => {
             attributes:['game_name']
         })
 
-        console.log(findGame.game_name)
+        // console.log(findGame.game_name)
 
         const currentWallet = findUserWallet.dataValues.wallet_balance
         const updatedBalance = parseFloat(currentWallet) + parseFloat(amount);
@@ -179,10 +179,12 @@ router.post("/bingo-games/win", async (req, res) => {
         );
 
         if (findGame.game_name === "Dragon Vs Tiger") {
+            console.log("dis game", findGame.game_name)
             setTimeout(() => {
                 emitWalletUpdate(user_id, updatedBalance);
             }, 5000); 
         } else {
+            console.log("dat game", findGame.game_name)
             emitWalletUpdate(user_id, updatedBalance);
         }
 
