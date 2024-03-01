@@ -39,15 +39,15 @@ const User = sequelize.define("User", {
         type: DataTypes.STRING,
         allowNull: false,
         primaryKey:true,
-        validate: {
-            isPhilippinePhoneNumber(value) {
-                const philippinePhoneNumberRegex = /^(\+?63|0)?[9]\d{9}$/;
+        // validate: {
+        //     isPhilippinePhoneNumber(value) {
+        //         const philippinePhoneNumberRegex = /^(\+?63|0)?[9]\d{9}$/;
 
-                if (!philippinePhoneNumberRegex.test(value)) {
-                    throw new Error('Invalid Philippine phone number format');
-                }
-            },
-        }
+        //         if (!philippinePhoneNumberRegex.test(value)) {
+        //             throw new Error('Invalid Philippine phone number format');
+        //         }
+        //     },
+        // }
     },
     user_type: {
         type: DataTypes.STRING,
