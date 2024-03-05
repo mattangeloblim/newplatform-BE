@@ -8,6 +8,8 @@ const sequelize = require("sequelize");
 const Admin = require("../models/AdminModel");
 const Roles_Permission = require("../models/RolesModel");
 const Wallet = require("../models/WalletModel");
+const Transaction = require("../models/TransactionModel");
+const { Op } = require("sequelize")
 
 async function authenticateAdmin(username, password) {
     const admin = await AdminModel.findOne({ where: { username } });
@@ -98,15 +100,15 @@ async function fetchUserProfile(player_id) {
             }
         })
         const ProfileWallet = await Wallet.findOne({
-            where:{
-                player_id:player_id
+            where: {
+                player_id: player_id
             }
         })
 
         const formattedReturn = {
             PlayerId: ProfileUser.player_id,
             Username: ProfileUser.username,
-            Email:ProfileUser.email,
+            Email: ProfileUser.email,
             Phone: ProfileUser.phone,
             Birthdate: ProfileUser.birthdate,
             Name: ProfileUser.name,
@@ -127,6 +129,49 @@ async function fetchUserProfile(player_id) {
     }
 }
 
+async function fetchUserDeposit(player_id, startdate, enddate) {
+    try {
+
+        const totalDeposit = await Transaction.findAll({
+            where: {
+                player_id: player_id,
+                transaction_type: "Deposit",
+                status: "SUCCESS",
+                createdAt: {
+                    [Op.between]: [startdate, enddate]
+                }
+            }
+        })
+
+        return totalDeposit
+
+    } catch (error) {
+        console.error('Error Fetching deposit', error)
+        throw error;
+    }
+}
+
+async function fetchUserWithdrawal(player_id, startdate, enddate) {
+    try {
+        
+        const totalWithdrawal = await Transaction.findAll({
+            where: {
+                player_id: player_id,
+                transaction_type: "Withdrawal",
+                status: "SUCCESS",
+                createdAt: {
+                    [Op.between]: [startdate, enddate]
+                }
+            }
+        })
+        return totalWithdrawal
+
+    } catch (error) {
+        console.error('Error Fetching deposit', error)
+        throw error;
+    }
+}
+
 
 module.exports = {
     authenticateAdmin,
@@ -135,5 +180,7 @@ module.exports = {
     fetchAdminRegister,
     fetchAdminRoles,
     fetchUsers,
-    fetchUserProfile
+    fetchUserProfile,
+    fetchUserDeposit,
+    fetchUserWithdrawal
 };

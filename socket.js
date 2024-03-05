@@ -3,7 +3,7 @@ const socketIO = require('socket.io');
 const { transactionHistory, walletBalance } = require("./services/userWalletService")
 const { fetchBettingHistory } = require("./services/userHistoryService")
 const { fetchBettingLogs, fetchTransactionLogs } = require("./services/backOfficeServices")
-const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles, fetchUsers, fetchUserProfile} = require("./services/adminServices")
+const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles, fetchUsers, fetchUserProfile, fetchUserDeposit, fetchUserWithdrawal } = require("./services/adminServices")
 
 let io;
 const userSockets = {};
@@ -104,6 +104,24 @@ function initializeSocket(server) {
                 socket.emit('FetchUser', fetchUser)
             } catch (error) {
                 console.error('Error Fetching All User', error)
+            }
+        })
+
+        socket.on('profileDeposit', async (profile_id, startdate, enddate) =>{
+            try {
+                const fetchDeposit = await fetchUserDeposit(profile_id, startdate, enddate)
+                socket.emit("displayDeposit", fetchDeposit)
+            } catch (error) {
+                console.error("error fetching deposit", error)
+            }
+        })
+
+        socket.on('profileWithdrawal', async (profile_id, startdate, enddate) =>{
+            try {
+                const totalWithdrawal = await fetchUserWithdrawal(profile_id, startdate, enddate)
+                socket.emit("displayWithdrawal", totalWithdrawal)
+            } catch (error) {
+                console.error("error fetching deposit", error)
             }
         })
 

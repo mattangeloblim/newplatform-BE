@@ -30,6 +30,7 @@ const cookieParser = require('cookie-parser');
 // ADMIN BACKOFFICE
 const adminLoginRoute = require("./routers/adminSide/adminLoginRoute")
 const adminRolesRoute = require("./routers/adminSide/adminRolesRoute")
+const AdminProfileRoute = require('./routers/adminSide/adminProfileRoute')
 
 app.use(cookieParser())
 
@@ -53,7 +54,7 @@ app.use((req, res, next) => {
 // // Apply to all routes
 // app.use(limiter);
 
-app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile, PlatformTransaction, adminLoginRoute, adminRolesRoute, adminAccessRole);
+app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificationApi, userDataProfile, PlatformTransaction, adminLoginRoute, adminRolesRoute, adminAccessRole, AdminProfileRoute);
 
 app.use("/redirect", CorsMiddleware, redirectEGames);
 app.use("/", CorsMiddleware, gameWalletIntegration);
