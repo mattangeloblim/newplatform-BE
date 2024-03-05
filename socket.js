@@ -3,7 +3,7 @@ const socketIO = require('socket.io');
 const { transactionHistory, walletBalance } = require("./services/userWalletService")
 const { fetchBettingHistory } = require("./services/userHistoryService")
 const { fetchBettingLogs, fetchTransactionLogs } = require("./services/backOfficeServices")
-const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles, fetchUsers, fetchUserProfile, fetchUserDeposit, fetchUserWithdrawal } = require("./services/adminServices")
+const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles, fetchUsers, fetchUserProfile, fetchUserDeposit, fetchUserWithdrawal, fetchBetNumber } = require("./services/adminServices")
 
 let io;
 const userSockets = {};
@@ -120,6 +120,15 @@ function initializeSocket(server) {
             try {
                 const totalWithdrawal = await fetchUserWithdrawal(profile_id, startdate, enddate)
                 socket.emit("displayWithdrawal", totalWithdrawal)
+            } catch (error) {
+                console.error("error fetching deposit", error)
+            }
+        })
+
+        socket.on('getBetCount', async (profile_id, startdate, enddate) =>{
+            try {
+                const betPerDay = await fetchBetNumber(profile_id, startdate, enddate)
+                socket.emit("displayBetCounts", betPerDay)
             } catch (error) {
                 console.error("error fetching deposit", error)
             }
