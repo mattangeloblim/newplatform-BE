@@ -2,8 +2,8 @@ require("dotenv").config();
 const socketIO = require('socket.io');
 const { transactionHistory, walletBalance } = require("./services/userWalletService")
 const { fetchBettingHistory } = require("./services/userHistoryService")
-const { fetchBettingLogs, fetchTransactionLogs } = require("./services/backOfficeServices")
-const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles, fetchUsers, fetchUserProfile, fetchUserDeposit, fetchUserWithdrawal, fetchBetNumber } = require("./services/adminServices")
+const { fetchBettingLogs, fetchTransactionLogs, PaymentLogs } = require("./services/backOfficeServices")
+const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles, fetchUsers, fetchUserProfile, fetchUserDeposit, fetchUserWithdrawal, fetchBetNumber, fetchwinloss } = require("./services/adminServices")
 
 let io;
 const userSockets = {};
@@ -11,20 +11,20 @@ const userSockets = {};
 function initializeSocket(server) {
     io = socketIO(server, {
         cors: {
-            origin: true, 
+            origin: true,
             methods: ["GET", "POST"]
         }
     });
 
     io.on('connection', (socket) => {
 
-        const player_id = socket.handshake.query.player_id;
+        // const player_id = socket.handshake.query.player_id;
 
-        userSockets[player_id] = socket;
-        const numberOfUsers = Object.keys(userSockets).length;
+        // userSockets[player_id] = socket;
+        // const numberOfUsers = Object.keys(userSockets).length;
 
         socket.on('disconnect', () => {
-            delete userSockets[player_id];
+            // delete userSockets[player_id];
 
             const numberOfUsers = Object.keys(userSockets).length;
 
@@ -42,7 +42,7 @@ function initializeSocket(server) {
 
         socket.on('getWalletBalance', async (profile_id) => {
             try {
-                
+
                 const userWalletBalance = await walletBalance(profile_id);
                 socket.emit('walletBalanceUpdate', userWalletBalance);
             } catch (error) {
@@ -98,7 +98,7 @@ function initializeSocket(server) {
             }
         });
 
-        socket.on('getAllUsers', async () =>{
+        socket.on('getAllUsers', async () => {
             try {
                 const fetchUser = await fetchUsers()
                 socket.emit('FetchUser', fetchUser)
@@ -107,7 +107,7 @@ function initializeSocket(server) {
             }
         })
 
-        socket.on('profileDeposit', async (profile_id, startdate, enddate) =>{
+        socket.on('profileDeposit', async (profile_id, startdate, enddate) => {
             try {
                 const fetchDeposit = await fetchUserDeposit(profile_id, startdate, enddate)
                 socket.emit("displayDeposit", fetchDeposit)
@@ -116,7 +116,7 @@ function initializeSocket(server) {
             }
         })
 
-        socket.on('profileWithdrawal', async (profile_id, startdate, enddate) =>{
+        socket.on('profileWithdrawal', async (profile_id, startdate, enddate) => {
             try {
                 const totalWithdrawal = await fetchUserWithdrawal(profile_id, startdate, enddate)
                 socket.emit("displayWithdrawal", totalWithdrawal)
@@ -125,7 +125,7 @@ function initializeSocket(server) {
             }
         })
 
-        socket.on('getBetCount', async (profile_id, startdate, enddate) =>{
+        socket.on('getBetCount', async (profile_id, startdate, enddate) => {
             try {
                 const betPerDay = await fetchBetNumber(profile_id, startdate, enddate)
                 socket.emit("displayBetCounts", betPerDay)
@@ -134,13 +134,30 @@ function initializeSocket(server) {
             }
         })
 
-        socket.on('getProfileUser', async (profile_id) =>{
+        socket.on('getProfileUser', async (profile_id) => {
             try {
-                console.log(profile_id)
                 const userProfile = await fetchUserProfile(profile_id);
                 socket.emit('profileUser', userProfile);
             } catch (error) {
                 console.error('Error Fetching User Profile', error)
+            }
+        })
+
+        socket.on('getWinLoss', async (profile_id, startdate, enddate) => {
+            try {
+                const winloss = await fetchwinloss(profile_id, startdate, enddate)
+                socket.emit("winloss", winloss)
+            } catch (error) {
+                console.error("Error getting winloss", error)
+            }
+        })
+
+        socket.on('getPayments', async () => {
+            try {
+                const payment = await PaymentLogs()
+                socket.emit("ShowPayments", payment)
+            } catch (error) {
+                console.error("Error fetching payments", error)
             }
         })
     });
@@ -155,14 +172,14 @@ function getIO() {
 
 function emitWalletUpdate(userId, balance) {
     const socket = userSockets[userId];
-  
+
     if (socket) {
-      socket.emit("walletCashinUpdate", { balance });
-      console.log(balance)
+        socket.emit("walletCashinUpdate", { balance });
+        console.log(balance)
     } else {
-      console.error(`Socket not found for user ID: ${userId}`);
+        console.error(`Socket not found for user ID: ${userId}`);
     }
-  }
+}
 
 
-module.exports = { initializeSocket, getIO, emitWalletUpdate};
+module.exports = { initializeSocket, getIO, emitWalletUpdate };

@@ -1,5 +1,6 @@
 const BettingHistory = require("../models/BettingHistoryModel")
 const BettingResult = require("../models/BettingResultModel");
+const GcashLogs = require("../models/GcashLogsModels");
 const Transaction = require("../models/TransactionModel");
 
 async function fetchBettingLogs() {
@@ -34,7 +35,14 @@ async function fetchTransactionLogs() {
 }
 
 
+async function PaymentLogs() {
+    const payments = await GcashLogs.findAll()
+    
+    return payments
+}
+
 module.exports = {
     fetchBettingLogs,
-    fetchTransactionLogs
+    fetchTransactionLogs,
+    PaymentLogs
 };

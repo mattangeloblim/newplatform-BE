@@ -11,6 +11,7 @@ const Wallet = require("../models/WalletModel");
 const Transaction = require("../models/TransactionModel");
 const { Op } = require("sequelize");
 const BettingHistory = require("../models/BettingHistoryModel");
+const BettingResult = require("../models/BettingResultModel")
 
 async function authenticateAdmin(username, password) {
     const admin = await AdminModel.findOne({ where: { username } });
@@ -154,7 +155,7 @@ async function fetchUserDeposit(player_id, startdate, enddate) {
 
 async function fetchUserWithdrawal(player_id, startdate, enddate) {
     try {
-        
+
         const totalWithdrawal = await Transaction.findAll({
             where: {
                 player_id: player_id,
@@ -173,13 +174,13 @@ async function fetchUserWithdrawal(player_id, startdate, enddate) {
     }
 }
 
-async function fetchBetNumber(player_id, startdate, enddate){
+async function fetchBetNumber(player_id, startdate, enddate) {
     try {
         // Count the number of bets per day
         const betCounts = await BettingHistory.findAll({
             attributes: [
                 [sequelize.literal('DATE(createdAt)'), 'date'],
-                [sequelize.fn('COUNT', sequelize.col('id')), 'bet_count'] 
+                [sequelize.fn('COUNT', sequelize.col('id')), 'bet_count']
             ],
             where: {
                 player_id: player_id,
@@ -187,12 +188,45 @@ async function fetchBetNumber(player_id, startdate, enddate){
                     [Op.between]: [startdate, enddate]
                 }
             },
-            group: [sequelize.literal('DATE(createdAt)')], 
+            group: [sequelize.literal('DATE(createdAt)')],
         });
 
         return betCounts;
     } catch (error) {
         console.error('Error fetching bet counts:', error);
+        throw error;
+    }
+}
+
+async function fetchwinloss(player_id, startdate, enddate) {
+    try {
+        const noOfBettings = await BettingHistory.count({
+            where: {
+                player_id: player_id,
+                createdAt: {
+                    [Op.between]: [startdate, enddate]
+                }
+            }
+        })
+
+        const wins = await BettingResult.count({
+            where: {
+                player_id: player_id,
+                createdAt: {
+                    [Op.between]: [startdate, enddate]
+                }
+            }
+        })
+
+        const responseFormat = {
+            bets: noOfBettings,
+            winnings: wins
+        }
+
+        return responseFormat
+
+    } catch (error) {
+        console.error("error fetching winloss", error)
         throw error;
     }
 }
@@ -208,5 +242,6 @@ module.exports = {
     fetchUserProfile,
     fetchUserDeposit,
     fetchUserWithdrawal,
-    fetchBetNumber
+    fetchBetNumber,
+    fetchwinloss
 };
