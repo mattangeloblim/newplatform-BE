@@ -7,6 +7,7 @@ const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles,
 
 let io;
 const userSockets = {};
+userSockets[player_id] = socket;
 
 function initializeSocket(server) {
     io = socketIO(server, {
@@ -20,7 +21,7 @@ function initializeSocket(server) {
 
         // const player_id = socket.handshake.query.player_id;
 
-        // userSockets[player_id] = socket;
+
         // const numberOfUsers = Object.keys(userSockets).length;
 
         // socket.on('disconnect', () => {
@@ -189,6 +190,10 @@ function emitWalletUpdate(userId, balance) {
     } else {
         console.error(`Socket not found for user ID: ${userId}`);
     }
+}
+
+function getWalletBalance(userId){
+
 }
 
 
