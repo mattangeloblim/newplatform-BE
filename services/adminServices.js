@@ -1,5 +1,4 @@
 // adminService.js
-
 const AdminModel = require("../models/AdminModel")
 const Roles = require("../models/RolesModel");
 const bcrypt = require('bcrypt');
@@ -9,9 +8,10 @@ const Admin = require("../models/AdminModel");
 const Roles_Permission = require("../models/RolesModel");
 const Wallet = require("../models/WalletModel");
 const Transaction = require("../models/TransactionModel");
-const { Op } = require("sequelize");
+const { Op, fn, col } = require("sequelize");
 const BettingHistory = require("../models/BettingHistoryModel");
 const BettingResult = require("../models/BettingResultModel")
+
 
 async function authenticateAdmin(username, password) {
     const admin = await AdminModel.findOne({ where: { username } });
@@ -231,6 +231,19 @@ async function fetchwinloss(player_id, startdate, enddate) {
     }
 }
 
+async function totalTurnOver(startdate, enddate) {
+
+    const turnover = await BettingHistory.findAll({
+        attributes: [[fn('SUM', col('amount')), 'totalAmount']],
+        where: {
+            createdAt: {
+                [Op.between]: [startdate, enddate]
+            }
+        }
+    })
+
+    return turnover[0].dataValues.totalAmount;
+}
 
 module.exports = {
     authenticateAdmin,
@@ -243,5 +256,6 @@ module.exports = {
     fetchUserDeposit,
     fetchUserWithdrawal,
     fetchBetNumber,
-    fetchwinloss
+    fetchwinloss,
+    totalTurnOver
 };
