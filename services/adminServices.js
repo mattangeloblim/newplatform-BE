@@ -233,11 +233,14 @@ async function fetchwinloss(player_id, startdate, enddate) {
 
 async function totalTurnOver(startdate, enddate) {
 
+    const endDatePlusOneDay = new Date(enddate);
+    endDatePlusOneDay.setDate(endDatePlusOneDay.getDate() + 1);
+
     const turnover = await BettingHistory.findAll({
         attributes: [[fn('SUM', col('amount')), 'totalAmount']],
         where: {
             createdAt: {
-                [Op.between]: [startdate, enddate]
+                [Op.between]: [startdate, endDatePlusOneDay]
             }
         }
     })
