@@ -245,8 +245,23 @@ async function totalTurnOver(startdate, enddate) {
         }
     })
 
-    return turnover[0].dataValues.totalAmount;
-}
+    const win = await BettingResult.findAll({
+        attributes: [[fn('SUM', col('amount_won')), 'totalAmountWon']],
+        where: {
+            createdAt: {
+                [Op.between]: [startdate, endDatePlusOneDay]
+            }
+        }
+    })
+    const totalTurnover = turnover[0].dataValues.totalAmount;
+    const totalWin = win[0].dataValues.totalAmountWon;
+    
+    // Calculating winloss
+    const winloss = totalTurnover - totalWin;
+
+    
+    return { totalTurnover, winloss };
+}   
 
 module.exports = {
     authenticateAdmin,
