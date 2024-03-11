@@ -6,9 +6,11 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 // const rateLimit = require('express-rate-limit');
 const { initializeSocket } = require('./socket');
+const fs = require("fs")
 const app = express()
 
 const server = http.createServer(app);
+const file = fs.readFileSync('./32F23477167D77797FC4015C6EFE2FB0.txt')
 
 const CorsMiddleware = require("./middlewares/CorsMiddleware")
 app.use(express.urlencoded({ extended: true }));
@@ -21,9 +23,9 @@ const gcashCashinApi = require("./routers/clientSide/gcashCashinAPI");
 const gcashNotificationApi = require("./routers/clientSide/GcashNotificationAPI");
 const redirectEGames = require("./routers/gameSide/breddasRedirectGamesRouter");
 const gameWalletIntegration = require("./routers/gameSide/breddasGamesRouter");
-const userDataProfile = require("./routers/clientSide/userDataProfile")
-const PlatformTransaction = require("./routers/clientSide/PlatformTransaction")
-const adminAccessRole = require("./routers/adminSide/adminAccessRoute")
+const userDataProfile = require("./routers/clientSide/userDataProfile");
+const PlatformTransaction = require("./routers/clientSide/PlatformTransaction"); 
+const adminAccessRole = require("./routers/adminSide/adminAccessRoute");
 const cookieParser = require('cookie-parser');
 
 
@@ -70,6 +72,10 @@ process.on('unhandledRejection', (reason, promise) => {
     const errorMessage = `Unhandled Rejection at: ${promise}, reason: ${reason}`;
     console.error(errorMessage);
 });
+
+app.get('/.well-known/pki-validation/32F23477167D77797FC4015C6EFE2FB0.txt', (req,res) =>{
+    res.sendFile('/home/ec2-user/newplatform-BE/32F23477167D77797FC4015C6EFE2FB0.txt')
+})
 
 initializeSocket(server);
 

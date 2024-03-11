@@ -255,13 +255,29 @@ async function totalTurnOver(startdate, enddate) {
     })
     const totalTurnover = turnover[0].dataValues.totalAmount;
     const totalWin = win[0].dataValues.totalAmountWon;
-    
+
     // Calculating winloss
     const winloss = totalTurnover - totalWin;
 
-    
+
     return { totalTurnover, winloss };
-}   
+}
+
+async function firstDeposit(startdate, enddate) {
+    const endDatePlusOneDay = new Date(enddate);
+    endDatePlusOneDay.setDate(endDatePlusOneDay.getDate() + 1);
+
+    const firstDepositPlayer = await Wallet.findAll({
+        where: {
+            first_deposit_at: {
+                [Op.ne]: null,
+                [Op.between]: [startdate, endDatePlusOneDay]
+            }
+        }
+    })
+
+    return firstDepositPlayer
+}
 
 module.exports = {
     authenticateAdmin,
@@ -275,5 +291,6 @@ module.exports = {
     fetchUserWithdrawal,
     fetchBetNumber,
     fetchwinloss,
-    totalTurnOver
+    totalTurnOver,
+    firstDeposit
 };
