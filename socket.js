@@ -23,13 +23,13 @@ function initializeSocket(server) {
         // userSockets[player_id] = socket;
         // const numberOfUsers = Object.keys(userSockets).length;
 
-        socket.on('disconnect', () => {
-            // delete userSockets[player_id];
+        // socket.on('disconnect', () => {
+        //     // delete userSockets[player_id];
 
-            const numberOfUsers = Object.keys(userSockets).length;
+        //     const numberOfUsers = Object.keys(userSockets).length;
 
-            io.emit('numberOfUsers', numberOfUsers);
-        });
+        //     io.emit('numberOfUsers', numberOfUsers);
+        // });
 
         socket.on('getTransactionHistory', async (profile_id) => {
             try {
