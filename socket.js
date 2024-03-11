@@ -7,7 +7,6 @@ const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles,
 
 let io;
 const userSockets = {};
-userSockets[player_id] = socket;
 
 function initializeSocket(server) {
     io = socketIO(server, {
@@ -19,18 +18,18 @@ function initializeSocket(server) {
 
     io.on('connection', (socket) => {
 
-        // const player_id = socket.handshake.query.player_id;
+        const player_id = socket.handshake.query.player_id;
 
+        userSockets[player_id] = socket;
+        const numberOfUsers = Object.keys(userSockets).length;
 
-        // const numberOfUsers = Object.keys(userSockets).length;
+        socket.on('disconnect', () => {
+            delete userSockets[player_id];
 
-        // socket.on('disconnect', () => {
-        //     // delete userSockets[player_id];
+            const numberOfUsers = Object.keys(userSockets).length;
 
-        //     const numberOfUsers = Object.keys(userSockets).length;
-
-        //     io.emit('numberOfUsers', numberOfUsers);
-        // });
+            io.emit('numberOfUsers', numberOfUsers);
+        });
 
         socket.on('getTransactionHistory', async (profile_id) => {
             try {
@@ -192,9 +191,7 @@ function emitWalletUpdate(userId, balance) {
     }
 }
 
-function getWalletBalance(userId){
-
-}
+function getWalletBalance(userId){}
 
 
 module.exports = { initializeSocket, getIO, emitWalletUpdate };
