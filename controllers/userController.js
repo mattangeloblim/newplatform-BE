@@ -22,6 +22,7 @@ async function registerUser(req, res) {
         await ipAddressModel.create({
             user: userData.username,
             ipAddress: userIPAddress,
+            browser_type: userAgent,
             action: 'Register'
         })
 
@@ -49,6 +50,7 @@ async function loginUser(req, res) {
         await ipAddressModel.create({
             user: credentialsData.username,
             ipAddress: userIPAddress,
+            browser_type: userAgent,
             action: 'Login'
         })
 

@@ -16,6 +16,14 @@ const Ip_Address = sequelize.define('Ip_Address', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    browser_type:{
+        type: DataTypes.STRING,
+        allowNull:true,
+    },
+    device_type:{
+        type: DataTypes.STRING,
+        allowNull:true,
+    },
     action: {
         type: DataTypes.STRING,
         allowNull: false,
