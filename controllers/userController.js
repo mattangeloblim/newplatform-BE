@@ -3,14 +3,21 @@ const registerService = require('../services/userRegisterService');
 const userProfileService = require("../services/userProfileServices")
 const loginService = require('../services/userLoginService');
 const ipAddressModel = require("../models/IpAddressModel")
+const useragent = require("useragent")
 
 async function registerUser(req, res) {
     try {
         const userData = req.body;
         const user = await registerService.registerUserService(userData);
         const userIPAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const userAgent = req.headers['user-agent'] || req.connection.remoteAgent;
 
-        console.log(`User with username ${userData.username} logged in from IP address: ${userIPAddress}`);
+        const agent = useragent.parse(userAgent);
+
+        // Accessing the device type
+        const deviceType = agent.device.toString();
+
+        console.log(`User with username ${userData.username} logged in from IP address: ${userIPAddress} and ${userAgent} and device type ${deviceType}`);
 
         await ipAddressModel.create({
             user: userData.username,
@@ -28,11 +35,16 @@ async function registerUser(req, res) {
 async function loginUser(req, res) {
     try {
         const credentialsData = req.body;
-        const loginAuthenticate = await loginService.loginUser(credentialsData, res)
+        const loginAuthenticate = await loginService.loginUser(credentialsData, res);
         const userIPAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const userAgent = req.headers['user-agent'] || req.connection.remoteAgent;
 
-        // Log the user's IP address
-        console.log(`User with username ${credentialsData.username} logged in from IP address: ${userIPAddress}`);
+        const agent = useragent.parse(userAgent);
+
+        // Accessing the device type
+        const deviceType = agent.device.toString();
+
+        console.log(`User with username ${credentialsData.username} logged in from IP address: ${userIPAddress} and ${userAgent} and device type ${deviceType}`);
 
         await ipAddressModel.create({
             user: credentialsData.username,
