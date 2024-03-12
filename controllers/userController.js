@@ -45,12 +45,15 @@ async function loginUser(req, res) {
         // Accessing the device type
         const deviceType = agent.device.toString();
 
+        // Accessing the browser type
+        const browserType = agent.family;
+
         console.log(`User with username ${credentialsData.username} logged in from IP address: ${userIPAddress} and ${userAgent} and device type ${deviceType}`);
 
         await ipAddressModel.create({
             user: credentialsData.username,
             ipAddress: userIPAddress,
-            browser_type: userAgent,
+            browser_type: browserType,
             action: 'Login'
         })
 
