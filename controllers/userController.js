@@ -43,15 +43,16 @@ async function loginUser(req, res) {
 
         const parser = new UAParser();
         const result = parser.setUA(userAgent).getResult();
-        console.log("result: ", result)
-        const deviceType = result.device.type
-        // console.log("device type: ", result.device.type)
+        console.log("browser_type: ", result.browser.name)
+        console.log("useragent:", result.ua) 
+        console.log("device_type:", result.os.name) 
+
 
         await ipAddressModel.create({
             user: credentialsData.username,
             ipAddress: userIPAddress,
             browser_type: userAgent,
-            device_type: deviceType,
+            // device_type: deviceType,
             action: 'Login'
         })
 
