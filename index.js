@@ -61,7 +61,6 @@ app.use("/api", CorsMiddleware, Authentication, gcashCashinApi, gcashNotificatio
 app.use("/redirect", CorsMiddleware, redirectEGames);
 app.use("/", CorsMiddleware, gameWalletIntegration);
 
-// Error-handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something went wrong!');
