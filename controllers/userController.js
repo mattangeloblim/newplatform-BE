@@ -3,7 +3,6 @@ const registerService = require('../services/userRegisterService');
 const userProfileService = require("../services/userProfileServices")
 const loginService = require('../services/userLoginService');
 const ipAddressModel = require("../models/IpAddressModel")
-const useragent = require("useragent")
 const UAParser = require('ua-parser-js');
 
 async function registerUser(req, res) {
@@ -13,17 +12,15 @@ async function registerUser(req, res) {
         const userIPAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const userAgent = req.headers['user-agent'] || req.connection.remoteAgent;
 
-        const agent = useragent.parse(userAgent);
-
-        // Accessing the device type
-        const deviceType = agent.device.toString();
-
-        console.log(`User with username ${userData.username} logged in from IP address: ${userIPAddress} and ${userAgent} and device type ${deviceType}`);
+        const parser = new UAParser();
+        const result = parser.setUA(userAgent).getResult();
 
         await ipAddressModel.create({
             user: userData.username,
             ipAddress: userIPAddress,
-            browser_type: userAgent,
+            useragent: result.ua,
+            browser_type: result.browser.name,
+            device_type: result.os.name,
             action: 'Register'
         })
 
