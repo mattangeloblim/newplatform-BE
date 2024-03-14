@@ -220,6 +220,7 @@ async function fetchwinloss(player_id, startdate, enddate) {
 
         const responseFormat = {
             bets: noOfBettings,
+            totalPayout: noOfBettings - wins,
             winnings: wins
         }
 
