@@ -49,7 +49,7 @@ async function editRolePermissions(roleName, newPermissions) {
 
 async function fetchNumberOfRegisteredUsersPerDay() {
     try {
-        const registeredUsersPerDay = await User.findAll({
+        const registeredUsersPerDay = await Wallet.findAll({
             attributes: [
                 [sequelize.fn('COUNT', sequelize.col('id')), 'userCount'],
                 [sequelize.fn('DATE', sequelize.col('updatedAt')), 'date'],
