@@ -7,22 +7,21 @@ async function fetchBettingLogs() {
     const userBettingHistory = await BettingHistory.findAll();
     const userBettingResult = await BettingResult.findAll();
 
-    const enhancedBettingHistory = userBettingHistory.map(history => {
-        const matchingResult = userBettingResult.find(result => result.transaction_id === history.transaction_id);
+    // map to store the total amount_won
+    const totalAmountsWon = {};
+    userBettingResult.forEach(result => {
+        totalAmountsWon[result.round_id] = (totalAmountsWon[result.round_id] || 0) + result.amount_won;
+    });
 
-        if (matchingResult) {
-            return {
-                ...history.dataValues,
-                amount_won: matchingResult.amount_won,
-                win_type: matchingResult.win_type
-            };
-        } else {
-            return {
-                ...history.dataValues,
-                amount_won: 0,
-                win_type: "LOSE"
-            };
-        }
+    const enhancedBettingHistory = userBettingHistory.map(history => {
+        const totalAmountWon = totalAmountsWon[history.round_id] || 0;
+        const winType = totalAmountWon > 0 ? "WIN" : "LOSE";
+
+        return {
+            ...history.dataValues,
+            amount_won: totalAmountWon,
+            win_type: winType
+        };
     });
 
     return enhancedBettingHistory;
