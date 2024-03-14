@@ -202,10 +202,11 @@ function emitWalletUpdate(userId, balance) {
 
 function logoutSession(userId) {
     const socket = userSockets[userId];
-    console.log("socket 2", socket)
+    // console.log("socket 2", socket)
 
     if (socket) {
         socket.emit("logoutSession");
+        console.log("logout session")
     } else {
         console.error(`Socket not found for user ID: ${userId}`);
     }
