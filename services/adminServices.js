@@ -220,7 +220,6 @@ async function fetchwinloss(player_id, startdate, enddate) {
 
         const responseFormat = {
             bets: noOfBettings,
-            totalPayout: noOfBettings - wins,
             winnings: wins
         }
 
@@ -261,7 +260,7 @@ async function totalTurnOver(startdate, enddate) {
     const winloss = totalTurnover - totalWin;
 
 
-    return { totalTurnover, winloss };
+    return { totalTurnover, totalWin, winloss };
 }
 
 async function firstDeposit(startdate, enddate) {
