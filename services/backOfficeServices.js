@@ -8,7 +8,7 @@ async function fetchBettingLogs() {
     const userBettingResult = await BettingResult.findAll();
 
     const enhancedBettingHistory = userBettingHistory.map(history => {
-        const matchingResult = userBettingResult.find(result => result.round_id === history.round_id);
+        const matchingResult = userBettingResult.find(result => result.transaction_id === history.transaction_id);
 
         if (matchingResult) {
             return {
