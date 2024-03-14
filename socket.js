@@ -190,6 +190,7 @@ function getIO() {
 
 function emitWalletUpdate(userId, balance) {
     const socket = userSockets[userId];
+    console.log("scoket 1", socket)
 
     if (socket) {
         socket.emit("walletCashinUpdate", { balance });
@@ -199,7 +200,16 @@ function emitWalletUpdate(userId, balance) {
     }
 }
 
-function getWalletBalance(userId){}
+function logoutSession(userId) {
+    const socket = userSockets[userId];
+    console.log("socket 2", socket)
+
+    if (socket) {
+        socket.emit("logoutSession");
+    } else {
+        console.error(`Socket not found for user ID: ${userId}`);
+    }
+}
 
 
-module.exports = { initializeSocket, getIO, emitWalletUpdate };
+module.exports = { initializeSocket, getIO, emitWalletUpdate, logoutSession };
