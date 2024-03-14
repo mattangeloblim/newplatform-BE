@@ -250,7 +250,7 @@ async function totalTurnOver(startdate, enddate) {
         attributes: [[fn('SUM', col('amount_won')), 'totalAmountWon']],
         where: {
             createdAt: {
-                [Op.between]: [startdate, enddate]
+                [Op.between]: [startdate, endDatePlusOneDay]
             }
         }
     })

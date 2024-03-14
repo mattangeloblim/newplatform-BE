@@ -190,7 +190,6 @@ function getIO() {
 
 function emitWalletUpdate(userId, balance) {
     const socket = userSockets[userId];
-    console.log("scoket 1", socket)
 
     if (socket) {
         socket.emit("walletCashinUpdate", { balance });
@@ -202,7 +201,6 @@ function emitWalletUpdate(userId, balance) {
 
 function logoutSession(userId) {
     const socket = userSockets[userId];
-    // console.log("socket 2", socket)
 
     if (socket) {
         socket.emit("logoutSession");
