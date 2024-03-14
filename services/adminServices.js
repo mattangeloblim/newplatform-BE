@@ -49,18 +49,18 @@ async function editRolePermissions(roleName, newPermissions) {
 
 async function fetchNumberOfRegisteredUsersPerDay() {
     try {
-        const registeredUsersPerDay = await Wallet.findAll({
+        const registeredUsersPerDay = await BettingHistory.findAll({
             attributes: [
-                [sequelize.fn('COUNT', sequelize.col('id')), 'userCount'],
+                [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('player_id'))), 'userCount'],
                 [sequelize.fn('DATE', sequelize.col('updatedAt')), 'date'],
             ],
-            group: [sequelize.fn('DATE', sequelize.col('updatedAt'))],
+            group: [sequelize.fn('DATE', sequelize.col('updatedAt')), 'player_id'],
         });
 
         return registeredUsersPerDay;
     } catch (error) {
         console.error('Error fetching registered users per day:', error);
-        throw error; // Handle the error as needed
+        throw error; 
     }
 }
 
