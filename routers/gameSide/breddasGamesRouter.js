@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const BettingResult = require("../../models/BettingResultModel");
 const Affiliation = require("../../models/AffiliationModel");
 const User = require("../../models/UserModel");
-const {emitWalletUpdate} = require("../../socket")
+const { emitWalletUpdate } = require("../../socket")
 
 router.use(cookieParser());
 
@@ -66,6 +66,12 @@ router.post("/bingo-games/bet", async (req, res) => {
 
         const updatedBalance = currentWallet - amount
 
+        let jackpotContribution = amount * 0.005; 
+
+        if (["Bingo Pares", "13 Ball Bingo", "Bingo Swertres", "Dragon vs Tiger"].includes(mappedGameType)) {
+            jackpotContribution = 0; 
+        }
+
         await BettingHistory.create({
             player_id: user_id,
             game_provider_id: 888,
@@ -76,7 +82,7 @@ router.post("/bingo-games/bet", async (req, res) => {
             bet_id: bet_id,
             transaction_id: transaction_id,
             round_id: round_id,
-            jackpot_contribution: amount * 0.005
+            jackpot_contribution: jackpotContribution
         })
 
         await Wallet.update(
@@ -150,10 +156,10 @@ router.post("/bingo-games/win", async (req, res) => {
         })
 
         const findGame = await BettingHistory.findOne({
-            where:{
-                round_id:round_id
+            where: {
+                round_id: round_id
             },
-            attributes:['game_name']
+            attributes: ['game_name']
         })
 
         const currentWallet = findUserWallet.dataValues.wallet_balance
@@ -179,7 +185,7 @@ router.post("/bingo-games/win", async (req, res) => {
         if (findGame.game_name === "Dragon vs Tiger" || findGame.game_name === "13 Ball Bingo") {
             setTimeout(() => {
                 emitWalletUpdate(user_id, updatedBalance);
-            }, 7000); 
+            }, 7000);
         } else {
             emitWalletUpdate(user_id, updatedBalance);
         }
