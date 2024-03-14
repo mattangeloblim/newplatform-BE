@@ -54,7 +54,7 @@ async function fetchNumberOfRegisteredUsersPerDay() {
                 [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('player_id'))), 'userCount'],
                 [sequelize.fn('DATE', sequelize.col('updatedAt')), 'date'],
             ],
-            group: [sequelize.fn('DATE', sequelize.col('updatedAt')), 'player_id'],
+            group: [sequelize.fn('DATE', sequelize.col('updatedAt'))],
         });
 
         return registeredUsersPerDay;
