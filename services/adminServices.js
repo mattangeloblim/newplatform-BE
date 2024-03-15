@@ -274,7 +274,7 @@ async function firstDeposit(startdate, enddate) {
     const endDatePlusOneDay = new Date(enddate);
     endDatePlusOneDay.setDate(endDatePlusOneDay.getDate() + 1);
 
-    const firstDepositPlayer = await Wallet.findAll({
+    const firstDepositPlayers = await Wallet.findAll({
         where: {
             first_deposit_at: {
                 [Op.ne]: null,
@@ -283,9 +283,20 @@ async function firstDeposit(startdate, enddate) {
         }
     })
 
-    return firstDepositPlayer
-}
+    // Count occurrences of each unique first_deposit_at date
+    const depositCounts = firstDepositPlayers.reduce((counts, player) => {
+        const depositDate = player.first_deposit_at.toDateString(); 
+        counts[depositDate] = (counts[depositDate] || 0) + 1; 
+        return counts;
+    }, {});
 
+    // Transform depositCounts object into an array of objects containing date and count
+    const response = Object.keys(depositCounts).map(date => {
+        return { date, count: depositCounts[date] };
+    });
+
+    return response;
+}
 module.exports = {
     authenticateAdmin,
     editRolePermissions,
