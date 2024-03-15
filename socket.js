@@ -73,9 +73,9 @@ function initializeSocket(server) {
                 console.error("Error fetching transaction history:", error);
             }
         });
-        socket.on('getActiveUsers', async () => {
+        socket.on('getActiveUsers', async (startdate, enddate) => {
             try {
-                const activeUsers = await fetchNumberOfRegisteredUsersPerDay();
+                const activeUsers = await fetchNumberOfRegisteredUsersPerDay(startdate, enddate);
                 socket.emit('activeUsersNum', activeUsers);
             } catch (error) {
                 console.error("Error fetching activeUsersNum:", error);

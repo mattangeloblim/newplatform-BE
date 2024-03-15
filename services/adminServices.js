@@ -47,9 +47,15 @@ async function editRolePermissions(roleName, newPermissions) {
     return role;
 }
 
-async function fetchNumberOfRegisteredUsersPerDay() {
+async function fetchNumberOfRegisteredUsersPerDay(startdate, enddate) {
     try {
+        const endDatePlusOneDay = new Date(enddate);
+        endDatePlusOneDay.setDate(endDatePlusOneDay.getDate() + 1);
         const registeredUsersPerDay = await BettingHistory.findAll({
+
+            where: {
+                createdAt: { [Op.between]: [startdate, endDatePlusOneDay] }
+            },
             attributes: [
                 [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('player_id'))), 'userCount'],
                 [sequelize.fn('DATE', sequelize.col('updatedAt')), 'date'],
@@ -60,7 +66,7 @@ async function fetchNumberOfRegisteredUsersPerDay() {
         return registeredUsersPerDay;
     } catch (error) {
         console.error('Error fetching registered users per day:', error);
-        throw error; 
+        throw error;
     }
 }
 
