@@ -3,7 +3,7 @@ const socketIO = require('socket.io');
 const { transactionHistory, walletBalance } = require("./services/userWalletService")
 const { fetchBettingHistory } = require("./services/userHistoryService")
 const { fetchBettingLogs, fetchTransactionLogs, PaymentLogs } = require("./services/backOfficeServices")
-const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles, fetchUsers, fetchUserProfile, totalTurnOver, fetchUserDeposit, fetchUserWithdrawal, fetchBetNumber, fetchwinloss, firstDeposit } = require("./services/adminServices")
+const { fetchNumberOfRegisteredUsersPerDay, fetchAdminRegister, fetchAdminRoles, fetchUsers, fetchUserProfile, totalTurnOver, fetchUserDeposit, fetchUserWithdrawal, fetchBetNumber, fetchwinloss, firstDeposit, betNumberGetter} = require("./services/adminServices")
 
 let io;
 const userSockets = {};
@@ -141,7 +141,7 @@ function initializeSocket(server) {
             } catch (error) {
                 console.error('Error Fetching User Profile', error)
             }
-        })
+        });
 
         socket.on('getWinLoss', async (profile_id, startdate, enddate) => {
             try {
@@ -150,7 +150,7 @@ function initializeSocket(server) {
             } catch (error) {
                 console.error("Error getting winloss", error)
             }
-        })
+        });
 
         socket.on('getPayments', async () => {
             try {
@@ -159,7 +159,7 @@ function initializeSocket(server) {
             } catch (error) {
                 console.error("Error fetching payments", error)
             }
-        })
+        });
 
         socket.on('getTotalTurnover', async (startdate, enddate) => {
             try {
@@ -168,7 +168,7 @@ function initializeSocket(server) {
             } catch (error) {
                 console.error("Error Fetching Turnovers", error)
             }
-        })
+        });
 
         socket.on('getFirstDeposit', async (startdate, enddate) => {
             try {
@@ -176,6 +176,15 @@ function initializeSocket(server) {
                 socket.emit("firstDeposit", firstdep)
             } catch (error) {
                 console.error("Error Fetching deposit", error)
+            }
+        });
+
+        socket.on('getBetNumber', async (startdate, enddate) => {
+            try {
+                const betnumbers = await betNumberGetter(startdate, enddate)
+                socket.emit("betNumber", betnumbers)
+            } catch (error) {
+                console.error("Error fetch bet numbers", error)
             }
         })
     });

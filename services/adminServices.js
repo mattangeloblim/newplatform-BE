@@ -238,10 +238,8 @@ async function fetchwinloss(player_id, startdate, enddate) {
 }
 
 async function totalTurnOver(startdate, enddate) {
-
     const endDatePlusOneDay = new Date(enddate);
     endDatePlusOneDay.setDate(endDatePlusOneDay.getDate() + 1);
-    console.log(endDatePlusOneDay)
 
     const turnover = await BettingHistory.findAll({
         attributes: [[fn('SUM', col('amount')), 'totalAmount']],
@@ -285,8 +283,8 @@ async function firstDeposit(startdate, enddate) {
 
     // Count occurrences of each unique first_deposit_at date
     const depositCounts = firstDepositPlayers.reduce((counts, player) => {
-        const depositDate = player.first_deposit_at.toDateString(); 
-        counts[depositDate] = (counts[depositDate] || 0) + 1; 
+        const depositDate = player.first_deposit_at.toDateString();
+        counts[depositDate] = (counts[depositDate] || 0) + 1;
         return counts;
     }, {});
 
@@ -296,6 +294,37 @@ async function firstDeposit(startdate, enddate) {
     });
 
     return response;
+}
+
+async function betNumberGetter(startdate, enddate) {
+    try {
+        const endDatePlusOneDay = new Date(enddate);
+        endDatePlusOneDay.setDate(endDatePlusOneDay.getDate() + 1);
+
+        const bethistory = await BettingHistory.findAll({
+            where: {
+                createdAt: {
+                    [Op.between]:
+                        [startdate, endDatePlusOneDay]
+                }
+            }
+        })
+
+        const counts = {};
+
+        // Loop through the bethistory array and count occurrences of each distinct createdAt date
+        bethistory.forEach(item => {
+            const createdAtDate = new Date(item.createdAt).toLocaleDateString();
+            counts[createdAtDate] = (counts[createdAtDate] || 0) + 1;
+        });
+
+
+        return formattedResponse = Object.entries(counts).map(([date, count]) => ({ date, count }));
+
+    } catch (error) {
+        console.error("error fetching bet numbers", error)
+        throw error;
+    }
 }
 module.exports = {
     authenticateAdmin,
@@ -310,5 +339,6 @@ module.exports = {
     fetchBetNumber,
     fetchwinloss,
     totalTurnOver,
-    firstDeposit
+    firstDeposit,
+    betNumberGetter
 };
