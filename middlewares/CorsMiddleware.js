@@ -8,6 +8,7 @@ module.exports = cors({
         "https://888bingo.ph",
         "https://stagingapi2.888bingo.ph",
         "https://api2.888bingo.ph",
+        "https://pf-backoffice.vercel.app",
         "https://platform-fe-azure.vercel.app"
       ].includes(origin) ||
       !origin
